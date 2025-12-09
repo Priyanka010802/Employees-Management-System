@@ -50,30 +50,22 @@ const LoginPage = ({ onLoginSuccess }) => {
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-6 relative overflow-hidden bg-slate-950">
-      {/* Background video (more visible, no heavy overlay) */}
-      <div className="absolute inset-0">
-        <video
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="w-full h-full object-cover"
-          style={{ filter: "brightness(1.05) contrast(1.1) saturate(1.1)" }}
-        >
-          <source src="https://assets.mixkit.co/videos/preview/mixkit-employees-working-with-computers-32614-large.mp4" type="video/mp4" />
-          <source src="https://assets.mixkit.co/videos/preview/mixkit-cold-looking-tech-devices-32614-large.mp4" type="video/mp4" />
-        </video>
-        {/* Very light gradient tint, keeps video clear */}
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-950/40 via-slate-900/30 to-indigo-950/40" />
-      </div>
+      {/* Software/IT Sector Background Image */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage: `linear-gradient(rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.7)), 
+                           url('https://images.unsplash.com/photo-1461749280684-dccba630e2f6?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80')`
+        }}
+      />
 
-      {/* Center card */}
+      {/* Center card - unchanged */}
       <div className="relative z-10 w-full max-w-md">
-        <div className="rounded-3xl bg-slate-900/75 border border-slate-700/70 backdrop-blur-2xl shadow-2xl overflow-hidden">
+        <div className="rounded-3xl bg-slate-900/85 border border-slate-700/80 backdrop-blur-3xl shadow-2xl overflow-hidden">
           {/* Header */}
-          <div className="px-8 pt-8 pb-6 border-b border-slate-800/70 bg-gradient-to-br from-indigo-500/40 via-slate-900/60 to-purple-600/40">
+          <div className="px-8 pt-8 pb-6 border-b border-slate-800/70 bg-gradient-to-br from-indigo-500/50 via-slate-900/70 to-purple-600/50">
             <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center shadow-xl mb-4 mx-auto">
-              <span className="text-xl">🚀</span>
+              <span className="text-xl">💻</span>
             </div>
             <h1 className="text-center text-xl font-semibold text-slate-50">
               Corporate Portal
@@ -101,7 +93,7 @@ const LoginPage = ({ onLoginSuccess }) => {
                 placeholder="priyankasangamkar@gmail.com"
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full rounded-2xl border border-slate-700 bg-slate-900/80 px-3.5 py-2.5 text-sm text-slate-50 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className="w-full rounded-2xl border border-slate-700 bg-slate-900/90 px-3.5 py-2.5 text-sm text-slate-50 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
               />
             </div>
 
@@ -121,7 +113,7 @@ const LoginPage = ({ onLoginSuccess }) => {
                 placeholder="Enter password"
                 value={formData.password}
                 onChange={handleChange}
-                className="w-full rounded-2xl border border-slate-700 bg-slate-900/80 px-3.5 py-2.5 text-sm text-slate-50 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                className="w-full rounded-2xl border border-slate-700 bg-slate-900/90 px-3.5 py-2.5 text-sm text-slate-50 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
               />
             </div>
 
@@ -141,7 +133,7 @@ const LoginPage = ({ onLoginSuccess }) => {
               <button
                 type="submit"
                 disabled={!formData.agree}
-                className="inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-500 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-indigo-500/40 hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                className="inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-500 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-indigo-500/40 hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
               >
                 Login
               </button>

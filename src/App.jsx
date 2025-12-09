@@ -6,9 +6,9 @@ import ManageEmployees from "./page/Employees";
 import CategoryPage from "./page/Categories";
 import Tasks from "./page/Tasks";
 // import Chat from "./page/Chart"; // removed
-import Workflows from "./page/HRWorkflowsPage";
+// import Workflows from "./page/HRWorkflowsPage";
 import Attendance from "./page/Attendance";
-import Reports from "./page/REport";
+// import Reports from "./page/REport";
 import Goals from "./page/Goals";
 
 const API_BASE = "http://localhost:3000";
@@ -67,12 +67,12 @@ function App() {
   const navItems = [
     { id: "dashboard", icon: "🏠", label: "Dashboard", color: "from-indigo-400 to-blue-500" },
     { id: "employees", icon: "👥", label: "Manage Employees", color: "from-emerald-400 to-teal-500" },
-    { id: "category", icon: "📂", label: "Categories", color: "from-purple-400 to-pink-500" },
+    { id: "category", icon: "📂", label: "departments", color: "from-purple-400 to-pink-500" },
     { id: "tasks", icon: "✅", label: "Task Management", color: "from-sky-400 to-indigo-500" },
     // { id: "chat", icon: "💬", label: "Mobile App Chat", color: "from-cyan-400 to-blue-500" }, // removed
-    { id: "workflows", icon: "🔁", label: "HR Workflows", color: "from-fuchsia-400 to-purple-500" },
+    // { id: "workflows", icon: "🔁", label: "HR Workflows", color: "from-fuchsia-400 to-purple-500" },
     { id: "attendance", icon: "⏱️", label: "Time & Attendance", color: "from-amber-400 to-orange-500" },
-    { id: "reports", icon: "📊", label: "Reports", color: "from-emerald-400 to-green-500" },
+    // { id: "reports", icon: "📊", label: "Reports", color: "from-emerald-400 to-green-500" },
     { id: "goals", icon: "🎯", label: "Goals", color: "from-pink-400 to-purple-500" }
   ];
 
@@ -91,7 +91,7 @@ function App() {
             </div>
             <div>
               <h1 className="text-lg font-black bg-gradient-to-r from-white via-blue-50 to-purple-50 bg-clip-text text-transparent drop-shadow-lg">
-                HR
+                InnovaHire
               </h1>
               <p className="text-xs text-white/70 font-medium tracking-wide">
                 Employee Management

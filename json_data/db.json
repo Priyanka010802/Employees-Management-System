@@ -32,33 +32,32 @@
       "id": 2
     }
   ],
-  "categories": [
+  "departments": [
     {
-      "name": "IT",
-      "id": 1
+      "id": 1,
+      "name": "Human Resources",
+      "code": "HR",
+      "description": "Employee relations, recruitment, learning & development.",
+      "status": "active"
     },
     {
       "id": 2,
-      "name": "Development"
+      "name": "Information Technology",
+      "code": "IT",
+      "description": "Infrastructure, security and internal tools.",
+      "status": "active"
     },
     {
-      "id": 3,
-      "name": "Designing"
-    },
-    {
-      "id": 4,
-      "name": "Management"
-    },
-    {
-      "name": "frontend",
-      "id": 5
+      "name": "it",
+      "code": "",
+      "description": "",
+      "status": "active",
+      "id": 3
     }
   ],
   "tasks": [
     {
       "projectTitle": "Employee Portal Revamp",
-      "projectType": "Internal",
-      "projectCategory": "HR",
       "title": "Prepare bill for laptop",
       "description": "Create purchase bill for new employee laptop.",
       "assignDate": "2025-12-09 10:00",
@@ -66,23 +65,7 @@
       "priority": "High",
       "status": "inprogress",
       "progress": 50,
-      "teamLeader": {
-        "id": 1,
-        "name": "Priyanka Sangamkar",
-        "role": "Frontend Developer",
-        "department": "it",
-        "source": "employee"
-      },
-      "teamWorkers": [
-        {
-          "id": 1,
-          "name": "Priyanka Sangamkar",
-          "role": "Frontend Developer",
-          "department": "it",
-          "source": "employee"
-        }
-      ],
-      "time": "2025-12-09 09:41",
+      "team": [],
       "id": 1
     },
     {
@@ -220,11 +203,11 @@
       "time": "10:00"
     },
     {
+      "id": 2,
       "from": "You",
       "to": "All",
       "text": "nn",
-      "time": "12:03 am",
-      "id": 2
+      "time": "12:03 am"
     }
   ],
   "workflows": [
@@ -240,20 +223,9 @@
       "id": 1,
       "employeeEmail": "priyankasangamkar@gmail.com",
       "date": "2025-12-08",
-      "status": "Late",
-      "checkIn": "12:30",
-      "checkOut": "18:10",
-      "updatedAt": "2025-12-09T10:25:05.861Z"
-    },
-    {
-      "id": "att_1765275522828_lu2x0c19r",
-      "employeeId": "2",
-      "employeeName": "",
-      "date": "2025-12-09",
       "status": "Present",
-      "checkIn": "17:48",
-      "checkOut": null,
-      "createdAt": "2025-12-09T10:18:42.828Z"
+      "checkIn": "09:30",
+      "checkOut": "18:10"
     }
   ],
   "reports": [

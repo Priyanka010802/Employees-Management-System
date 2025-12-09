@@ -632,6 +632,7 @@ const ManageEmployees = () => {
                       alt={selectedEmployeeForPrint.name}
                       className="w-32 h-32 md:w-40 md:h-40 lg:w-44 lg:h-44 rounded-2xl object-cover border-6 border-white/60 shadow-2xl ring-4 ring-indigo-200/50 group-hover:scale-105 transition-all duration-500"
                     />
+                    
                     <div className="absolute inset-0 rounded-2xl bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   </div>
                 </div>
