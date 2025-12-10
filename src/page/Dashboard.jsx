@@ -1,9 +1,9 @@
-// src/pages/Dashboard.jsx
+// src/page/Dashboard.jsx
 import { useEffect, useMemo, useState } from "react";
 
 const API_BASE = "http://localhost:3000";
 
-const Dashboard = ({ currentUserEmail }) => {
+const Dashboard = ({ currentUserEmail, onViewTasks }) => {
   const [admins, setAdmins] = useState([]);
   const [employees, setEmployees] = useState([]);
   const [sessions, setSessions] = useState([]);
@@ -40,14 +40,6 @@ const Dashboard = ({ currentUserEmail }) => {
     if (currentUserEmail) fetchData();
   }, [currentUserEmail]);
 
-  // EMPLOYEE METRICS
-  const totalEmployees = employees.length;
-  const totalSalary = useMemo(
-    () => employees.reduce((sum, e) => sum + (Number(e.salary) || 0), 0),
-    [employees]
-  );
-
-  // TASK / PROJECT HEALTH
   const normalizeStatus = (raw) => {
     const s = (raw || "").toLowerCase();
     if (s === "completed" || s === "done" || s === "finished") return "Completed";
@@ -55,6 +47,12 @@ const Dashboard = ({ currentUserEmail }) => {
       return "In Progress";
     return "Pending";
   };
+
+  const totalEmployees = employees.length;
+  const totalSalary = useMemo(
+    () => employees.reduce((sum, e) => sum + (Number(e.salary) || 0), 0),
+    [employees]
+  );
 
   const projectStatus = useMemo(() => {
     const statusCount = {};
@@ -93,7 +91,6 @@ const Dashboard = ({ currentUserEmail }) => {
     [tasks]
   );
 
-  // ADMIN SESSION
   const currentAdmin = useMemo(
     () => admins.find((a) => a.email === currentUserEmail),
     [admins, currentUserEmail]
@@ -114,399 +111,446 @@ const Dashboard = ({ currentUserEmail }) => {
 
   const formatCurrency = (amount) => `₹${Math.abs(amount).toLocaleString()}`;
 
-  const getStatusGradient = (status) => {
-    const gradients = {
-      Completed: "from-emerald-500 to-teal-600",
-      "In Progress": "from-amber-500 to-orange-600",
-      Pending: "from-slate-500 to-slate-700",
-      Blocked: "from-rose-500 to-pink-600",
-    };
-    return gradients[status] || "from-slate-500 to-slate-700";
-  };
+  // mini graph helpers
+  const teamSizePercent = Math.min(100, (totalEmployees / 50) * 100 || 0); // assume 50 as a soft cap
+  const inProgressPercent = Math.min(
+    100,
+    (inProgressProjects / (totalProjects || 1)) * 100
+  );
+  const costPercent = Math.min(100, (totalSalary / 500000) * 100 || 0); // assume 5L as soft cap
 
   return (
-    <div className="flex-1 min-h-screen relative overflow-hidden">
-      {/* Background */}
-      <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))]" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,rgba(120,119,198,0.15),transparent)] animate-pulse" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(255,255,255,0.1),transparent)] animate-pulse delay-1000" />
-      </div>
+    <div className="min-h-screen w-full bg-slate-50 relative ">
+      {/* animated background */}
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-sky-100 via-white to-indigo-50" />
+      <div className="pointer-events-none absolute -left-40 top-20 h-80 w-80 rounded-full bg-sky-200/40 blur-3xl animate-pulse" />
+      <div className="pointer-events-none absolute -right-40 bottom-10 h-80 w-80 rounded-full bg-emerald-200/40 blur-3xl animate-[pulse_6s_ease-in-out_infinite]" />
 
-      {/* Header */}
-      <header className="relative z-20 h-20 border-b border-white/10 flex items-center justify-between px-8 bg-white/5 backdrop-blur-3xl shadow-2xl">
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 bg-gradient-to-r from-white/20 to-blue-100/20 rounded-2xl backdrop-blur-xl flex items-center justify-center shadow-xl">
-            <span className="text-2xl">🚀</span>
+      <div className="relative z-10 max-w-7xl mx-auto px-6 py-6 lg:py-8">
+        {/* TOP BAR */}
+        <header className="flex items-center justify-between gap-4 mb-8">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center justify-center h-11 w-11 rounded-2xl bg-sky-500 text-white font-bold shadow-lg animate-[float_6s_ease-in-out_infinite]">
+              D
+            </div>
+            <div>
+              <p className="text-xs text-slate-500 mb-1">
+                Welcome  {currentAdmin?.name || "Admin"}
+              </p>
+              <h1 className="text-xl md:text-2xl font-semibold text-slate-800">
+                Dashboard 
+              </h1>
+            </div>
           </div>
-          <div>
-            <h1 className="text-2xl font-black bg-gradient-to-r from-white via-blue-100 to-purple-100 bg-clip-text text-transparent tracking-tight drop-shadow-2xl">
-              Project Dashboard
-            </h1>
-            <p className="text-xs bg-white/80 text-slate-800 px-2 py-0.5 rounded-full font-bold tracking-wide">
-              Real-time analytics • {totalProjects} active projects
+
+          <div className="flex items-center gap-4">
+            <div className="hidden sm:flex flex-col items-end text-xs text-slate-500">
+              <span className="font-medium text-slate-700">
+                {new Date().toLocaleDateString("en-IN", {
+                  day: "2-digit",
+                  month: "short",
+                  year: "numeric",
+                })}
+              </span>
+              <span className="tracking-wide">
+                {new Date().toLocaleTimeString("en-IN", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              </span>
+            </div>
+            {currentUserEmail && (
+              <div className="flex items-center gap-2 px-3 py-2 rounded-full bg-white/70 shadow-sm border border-slate-100 backdrop-blur-lg transition-all duration-300 hover:shadow-md hover:-translate-y-0.5">
+                <div className="h-8 w-8 rounded-full bg-emerald-100 flex items-center justify-center text-xs font-semibold text-emerald-700">
+                  {currentUserEmail[0]?.toUpperCase()}
+                </div>
+                <div className="flex flex-col text-xs">
+                  <span className="text-slate-700 font-semibold">
+                    {currentUserEmail}
+                  </span>
+                  <span className="text-emerald-500 font-medium">Admin</span>
+                </div>
+              </div>
+            )}
+          </div>
+        </header>
+
+        {/* TOP SUMMARY ROW */}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-5 mb-8">
+          {/* Today / completion ring */}
+          <div className="lg:col-span-1 bg-white/70 backdrop-blur-xl rounded-3xl border border-white shadow-[0_18px_40px_rgba(15,23,42,0.06)] p-5 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <p className="text-xs font-medium text-slate-500 mb-1">Today</p>
+                <p className="text-sm text-slate-400">
+                  Overall project completion
+                </p>
+              </div>
+              <span className="px-2 py-1 text-[11px] rounded-full bg-rose-50 text-rose-500 font-semibold">
+                {projectCompletionRate >= 80
+                  ? "Excellent"
+                  : projectCompletionRate >= 50
+                  ? "On track"
+                  : "Attention"}
+              </span>
+            </div>
+
+            <div className="flex items-center gap-4 mb-4">
+              <div className="relative h-20 w-20">
+                <svg className="h-20 w-20 -rotate-90">
+                  <circle
+                    cx="40"
+                    cy="40"
+                    r="32"
+                    className="stroke-slate-100"
+                    strokeWidth="8"
+                    fill="transparent"
+                  />
+                <circle
+                    cx="40"
+                    cy="40"
+                    r="32"
+                    className="stroke-emerald-500 transition-all duration-700"
+                    strokeWidth="8"
+                    fill="transparent"
+                    strokeDasharray={2 * Math.PI * 32}
+                    strokeDashoffset={
+                      2 * Math.PI * 32 * (1 - projectCompletionRate / 100)
+                    }
+                    strokeLinecap="round"
+                  />
+                </svg>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span className="text-sm font-semibold text-slate-800">
+                    {projectCompletionRate || 0}%
+                  </span>
+                </div>
+              </div>
+              <div className="flex-1 text-xs text-slate-500">
+                <p className="mb-1">
+                  You have{" "}
+                  <span className="font-semibold text-slate-700">
+                    {totalProjects}
+                  </span>{" "}
+                  active tasks.
+                </p>
+                <p>
+                  Completed{" "}
+                  <span className="font-semibold text-emerald-600">
+                    {completedProjects}
+                  </span>{" "}
+                  • In progress{" "}
+                  <span className="font-semibold text-amber-500">
+                    {inProgressProjects}
+                  </span>
+                </p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={onViewTasks}
+              className="mt-2 inline-flex items-center justify-center gap-2 rounded-2xl bg-sky-500 hover:bg-sky-600 text-white text-sm font-semibold py-2.5 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5"
+            >
+              <span>View full tasks board</span>
+              <span className="text-xs">↗</span>
+            </button>
+          </div>
+
+          {/* KPI cards with animated mini graphs */}
+          <div className="lg:col-span-2 grid grid-cols-3 gap-4">
+            {/* Team size */}
+            <div className="bg-white/70 backdrop-blur-xl rounded-3xl border border-white shadow-sm px-4 py-4 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
+              <p className="text-xs font-medium text-slate-500 mb-2">
+                Team size
+              </p>
+              <p className="text-lg font-semibold text-slate-800 mb-1">
+                {totalEmployees || 0}
+              </p>
+              <p className="text-[11px] text-emerald-500 font-medium mb-3">
+                Active employees
+              </p>
+              {/* mini bar */}
+              <div className="h-2.5 w-full rounded-full bg-slate-100 overflow-hidden relative">
+                <div
+                  className="h-full rounded-full bg-gradient-to-r from-emerald-400 via-emerald-500 to-emerald-600 transition-all duration-700"
+                  style={{ width: `${Math.max(4, teamSizePercent)}%` }}
+                />
+                <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(255,255,255,0.5)_0,transparent_40%,transparent_60%,rgba(255,255,255,0.5)_100%)] bg-[length:200%_100%] animate-[gradientSlide_3s_linear_infinite]" />
+              </div>
+              <p className="mt-1 text-[10px] text-slate-400">
+                Approx capacity usage {Math.round(teamSizePercent)}%
+              </p>
+            </div>
+
+            {/* Active projects */}
+            <div className="bg-white/70 backdrop-blur-xl rounded-3xl border border-white shadow-sm px-4 py-4 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
+              <p className="text-xs font-medium text-slate-500 mb-2">
+                Active projects
+              </p>
+              <p className="text-lg font-semibold text-slate-800 mb-1">
+                {inProgressProjects}
+              </p>
+              <p className="text-[11px] text-amber-500 font-medium mb-3">
+                In progress
+              </p>
+              {/* mini stacked column */}
+              <div className="flex items-end gap-1.5 h-10">
+                <div className="flex-1 h-full rounded-full bg-slate-100 overflow-hidden relative">
+                  <div
+                    className="absolute bottom-0 w-full rounded-full bg-gradient-to-t from-amber-500 via-amber-400 to-orange-400 transition-all duration-700"
+                    style={{ height: `${Math.max(10, inProgressPercent)}%` }}
+                  />
+                  <div className="absolute inset-0 bg-white/10" />
+                </div>
+                <div className="w-1.5 h-3 rounded-full bg-slate-200" />
+                <div className="w-1.5 h-5 rounded-full bg-slate-200" />
+              </div>
+              <p className="mt-1 text-[10px] text-slate-400">
+                {Math.round(inProgressPercent)}% of all tasks
+              </p>
+            </div>
+
+            {/* Monthly cost */}
+            <div className="bg-white/70 backdrop-blur-xl rounded-3xl border border-white shadow-sm px-4 py-4 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
+              <p className="text-xs font-medium text-slate-500 mb-2">
+                Monthly cost
+              </p>
+              <p className="text-lg font-semibold text-slate-800 mb-1">
+                {formatCurrency(totalSalary)}
+              </p>
+              <p className="text-[11px] text-slate-400 font-medium mb-3">
+                Approx salary payroll
+              </p>
+              {/* mini sparkline */}
+              <div className="h-14 w-full relative">
+                <svg
+                  viewBox="0 0 100 40"
+                  className="absolute inset-0 text-sky-400/80"
+                >
+                  <polyline
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    points="0,30 20,25 35,28 50,18 65,22 80,15 100,18"
+                    className="animate-[dash_3s_ease-in-out_infinite]"
+                    strokeDasharray="140"
+                    strokeDashoffset="0"
+                  />
+                </svg>
+                <div className="absolute inset-x-0 bottom-4 h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent" />
+              </div>
+              <p className="mt-1 text-[10px] text-slate-400">
+                Utilization {Math.round(costPercent)}% of planned budget
+              </p>
+            </div>
+          </div>
+
+          {/* donut */}
+          <div className="lg:col-span-1 bg-white/70 backdrop-blur-xl rounded-3xl border border-white shadow-[0_18px_40px_rgba(15,23,42,0.06)] p-5 flex flex-col transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl">
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-xs font-medium text-slate-500">
+                Task completion
+              </p>
+              <button
+                type="button"
+                onClick={onViewTasks}
+                className="text-[11px] text-sky-500 font-semibold hover:text-sky-600 transition-colors"
+              >
+                View stats
+              </button>
+            </div>
+            <div className="flex items-center gap-5">
+              <div className="relative h-24 w-24">
+                <svg className="h-24 w-24 -rotate-90">
+                  <circle
+                    cx="48"
+                    cy="48"
+                    r="34"
+                    className="stroke-slate-100"
+                    strokeWidth="8"
+                    fill="transparent"
+                  />
+                  <circle
+                    cx="48"
+                    cy="48"
+                    r="34"
+                    className="stroke-emerald-500 transition-all duration-700"
+                    strokeWidth="8"
+                    fill="transparent"
+                    strokeDasharray={2 * Math.PI * 34}
+                    strokeDashoffset={
+                      2 *
+                      Math.PI *
+                      34 *
+                      (1 - completedProjects / (totalProjects || 1))
+                    }
+                    strokeLinecap="round"
+                  />
+                </svg>
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                  <span className="text-sm font-semibold text-slate-800">
+                    {completedProjects}/{totalProjects || 0}
+                  </span>
+                  <span className="text-[10px] text-slate-400">Completed</span>
+                </div>
+              </div>
+
+              <div className="flex-1 text-xs text-slate-500 space-y-1.5">
+                <p>
+                  On time tasks:{" "}
+                  <span className="font-semibold text-emerald-600">
+                    {completedProjects}
+                  </span>
+                </p>
+                <p>
+                  In progress:{" "}
+                  <span className="font-semibold text-amber-500">
+                    {inProgressProjects}
+                  </span>
+                </p>
+                <p>
+                  Pending/other:{" "}
+                  <span className="font-semibold text-slate-600">
+                    {Math.max(
+                      0,
+                      totalProjects - completedProjects - inProgressProjects
+                    )}
+                  </span>
+                </p>
+              </div>
+            </div>
+            <p className="mt-3 text-[11px] text-emerald-500 font-medium flex items-center gap-1">
+              ↑ Performing better than last week
             </p>
           </div>
         </div>
-        {currentUserEmail && (
-          <p className="text-xs bg-gradient-to-r from-white/70 to-blue-100/70 bg-clip-text text-transparent font-medium px-3 py-1 rounded-full backdrop-blur-sm border border-white/30">
-            {currentUserEmail}
-          </p>
-        )}
-      </header>
 
-      <main className="relative z-10 px-8 py-12 max-w-7xl mx-auto space-y-12">
-        {/* Project Health Monitor */}
-        <section className="relative">
-          <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-emerald-400/10 via-cyan-400/5 to-purple-500/10 blur-3xl -z-10" />
-          <div className="relative bg-white/10 backdrop-blur-2xl rounded-3xl border border-white/15 shadow-[0_24px_80px_rgba(15,23,42,0.9)] p-8 lg:p-10 overflow-hidden">
-            <div className="flex items-center justify-between mb-8 gap-4">
-              <div>
-                <p className="text-xs font-semibold tracking-[0.25em] text-emerald-200 uppercase mb-2">
-                  Overall Progress
-                </p>
-                <h2 className="text-2xl md:text-3xl font-black bg-gradient-to-r from-white via-emerald-100 to-cyan-100 bg-clip-text text-transparent">
-                  Project Health Monitor
-                </h2>
-              </div>
-              <div className="hidden md:flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/20 text-xs font-semibold text-white/80">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                Live synced with Tasks
-              </div>
+        {/* MIDDLE ROW */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          {/* Project status distribution */}
+          <section className="bg-white/70 backdrop-blur-xl rounded-3xl border border-white shadow-sm p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-sm font-semibold text-slate-800">
+                Project status distribution
+              </h2>
+              <span className="px-2 py-1 rounded-full bg-emerald-50 text-[11px] text-emerald-600 font-medium">
+                Live synced
+              </span>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
-              {/* Left: summary */}
-              <div className="space-y-6">
-                <div>
-                  <p className="text-sm text-white/70 mb-1">Average completion</p>
-                  <div className="flex items-end gap-3">
-                    <span className="text-6xl md:text-7xl font-black bg-gradient-to-r from-emerald-300 via-emerald-400 to-teal-300 bg-clip-text text-transparent leading-none">
-                      {projectCompletionRate}%
-                    </span>
-                    <span className="text-sm text-white/60 mb-2">
-                      across {totalProjects || 0} tasks
-                    </span>
-                  </div>
-                </div>
-
-                <div className="flex flex-wrap gap-3">
-                  <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-emerald-500/15 border border-emerald-400/40">
-                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
-                    <span className="text-xs font-semibold text-emerald-100">
-                      Completed: {completedProjects}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-amber-500/15 border border-amber-400/40">
-                    <span className="w-2.5 h-2.5 rounded-full bg-amber-400" />
-                    <span className="text-xs font-semibold text-amber-100">
-                      In Progress: {inProgressProjects}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-slate-500/20 border border-slate-300/40">
-                    <span className="w-2.5 h-2.5 rounded-full bg-slate-300" />
-                    <span className="text-xs font-semibold text-slate-100">
-                      Pending/Other:{" "}
-                      {Math.max(
-                        0,
-                        totalProjects - completedProjects - inProgressProjects
-                      )}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Center: thermometer */}
-              <div className="flex justify-center">
-                <div className="relative h-56 w-16">
-                  <div className="absolute inset-x-1 top-0 bottom-0 rounded-full bg-slate-900/60 border border-white/10 overflow-hidden">
-                    <div
-                      className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-emerald-400 via-emerald-300 to-cyan-300"
-                      style={{ height: `${projectCompletionRate || 0}%` }}
-                    />
-                    {[20, 40, 60, 80].map((tick) => (
+            <div className="grid grid-cols-3 gap-4">
+              {projectStatus.map(({ status, percentage }) => (
+                <div
+                  key={status}
+                  className="flex flex-col items-center justify-end h-40 rounded-3xl bg-slate-50 border border-slate-100 relative overflow-hidden group transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-100 to-transparent opacity-80 group-hover:opacity-100 transition-opacity" />
+                  <div className="relative flex-1 flex items-end w-full px-4 pb-4">
+                    <div className="w-full bg-slate-100 rounded-full h-full flex items-end overflow-hidden">
                       <div
-                        key={tick}
-                        className="absolute inset-x-0 h-px bg-white/10"
-                        style={{ bottom: `${tick}%` }}
+                        className={`w-full rounded-full ${
+                          status === "Completed"
+                            ? "bg-gradient-to-t from-emerald-500 via-emerald-400 to-emerald-300"
+                            : status === "In Progress"
+                            ? "bg-gradient-to-t from-amber-500 via-amber-400 to-amber-300"
+                            : "bg-gradient-to-t from-slate-400 via-slate-300 to-slate-200"
+                        } transition-all duration-700`}
+                        style={{ height: `${Math.max(10, percentage)}%` }}
                       />
-                    ))}
-                  </div>
-                  <div className="absolute -right-28 top-1/2 -translate-y-1/2 px-4 py-2 rounded-2xl bg-white/10 border border-white/25 backdrop-blur-xl shadow-xl">
-                    <p className="text-[11px] text-white/70">On‑track score</p>
-                    <p className="text-lg font-bold text-emerald-200">
-                      {projectCompletionRate >= 80
-                        ? "Excellent"
-                        : projectCompletionRate >= 50
-                        ? "Stable"
-                        : "Needs focus"}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Right: colorful mini distribution */}
-              <div className="space-y-4">
-                <p className="text-sm text-white/70 flex items-center gap-2">
-                  Status distribution
-                  <span className="px-2 py-0.5 rounded-full bg-white/10 text-[10px] uppercase tracking-wide text-white/60 border border-white/20">
-                    Live
-                  </span>
-                </p>
-
-                <div className="flex flex-wrap gap-2 text-[11px]">
-                  <span className="px-2.5 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/50 text-emerald-100 flex items-center gap-1">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400" />
-                    Completed
-                  </span>
-                  <span className="px-2.5 py-1 rounded-full bg-amber-500/20 border border-amber-400/50 text-amber-100 flex items-center gap-1">
-                    <span className="w-2 h-2 rounded-full bg-amber-400" />
-                    In Progress
-                  </span>
-                  <span className="px-2.5 py-1 rounded-full bg-slate-500/30 border border-slate-300/50 text-slate-100 flex items-center gap-1">
-                    <span className="w-2 h-2 rounded-full bg-slate-200" />
-                    Pending / Other
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-3 gap-3">
-                  {projectStatus.map(({ status, percentage }) => (
-                    <div
-                      key={status}
-                      className="relative flex flex-col items-center justify-end h-40 rounded-2xl bg-gradient-to-br from-slate-900/60 to-slate-800/60 border border-white/10 px-2 py-3 overflow-hidden group"
-                    >
-                      <div
-                        className="absolute inset-x-4 bottom-6 h-20 blur-2xl opacity-40 group-hover:opacity-70 transition-opacity"
-                        style={{
-                          background:
-                            status === "Completed"
-                              ? "radial-gradient(circle at 50% 100%, rgba(16,185,129,0.9), transparent)"
-                              : status === "In Progress"
-                              ? "radial-gradient(circle at 50% 100%, rgba(245,158,11,0.9), transparent)"
-                              : "radial-gradient(circle at 50% 100%, rgba(148,163,184,0.9), transparent)",
-                        }}
-                      />
-                      <div className="relative flex-1 flex items-end w-full">
-                        <div className="w-full rounded-full overflow-hidden bg-white/5 h-full flex items-end">
-                          <div
-                            className={`w-full rounded-full shadow-lg transition-all duration-500 ${
-                              status === "Completed"
-                                ? "bg-gradient-to-t from-emerald-500 via-emerald-400 to-emerald-300 shadow-emerald-500/60"
-                                : status === "In Progress"
-                                ? "bg-gradient-to-t from-amber-500 via-amber-400 to-amber-300 shadow-amber-500/60"
-                                : "bg-gradient-to-t from-slate-400 via-slate-300 to-slate-200 shadow-slate-400/60"
-                            }`}
-                            style={{ height: `${Math.max(8, percentage)}%` }}
-                          />
-                        </div>
-                      </div>
-                      <p className="mt-2 text-xs font-semibold text-white/90 text-center truncate w-full">
-                        {status}
-                      </p>
-                      <p className="text-[11px] text-white/60">{percentage}%</p>
-                    </div>
-                  ))}
-                  {projectStatus.length === 0 && (
-                    <p className="col-span-3 text-xs text-white/60 text-center mt-4">
-                      No task data yet.
-                    </p>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* KPIs */}
-        <section className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-          {[
-            {
-              label: "Team Size",
-              value: totalEmployees,
-              icon: "👥",
-              gradient: "from-sky-500 to-cyan-600",
-            },
-            {
-              label: "Active Projects",
-              value: inProgressProjects,
-              icon: "⏳",
-              gradient: "from-amber-500 to-orange-600",
-            },
-            {
-              label: "Completed",
-              value: completedProjects,
-              icon: "✅",
-              gradient: "from-emerald-500 to-teal-600",
-            },
-            {
-              label: "Monthly Cost",
-              value: formatCurrency(totalSalary),
-              icon: "💰",
-              gradient: "from-purple-500 to-violet-600",
-            },
-          ].map((item) => (
-            <div
-              key={item.label}
-              className={`group relative rounded-3xl p-8 text-white shadow-2xl hover:shadow-3xl transition-all duration-700 hover:-translate-y-4 overflow-hidden border border-white/20 backdrop-blur-xl ${item.gradient}`}
-            >
-              <div className="absolute inset-0 opacity-20">
-                <div className="absolute inset-0 bg-gradient-to-br from-white/30 via-transparent to-white/10 animate-shimmer" />
-              </div>
-              <div className="relative z-10">
-                <div className="w-20 h-20 bg-white/30 backdrop-blur-xl rounded-3xl flex items-center justify-center mb-6 shadow-2xl group-hover:scale-110 transition-all duration-500 mx-auto lg:mx-0">
-                  <span className="text-3xl">{item.icon}</span>
-                </div>
-                <div className="space-y-2 text-center lg:text-left">
-                  <p className="text-3xl lg:text-4xl font-black group-hover:scale-105 transition-transform">
-                    {item.value}
-                  </p>
-                  <p className="text-lg font-bold opacity-90 capitalize tracking-wide">
-                    {item.label}
-                  </p>
-                </div>
-              </div>
-            </div>
-          ))}
-        </section>
-
-        {/* Breakdown + Recent projects */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <section className="bg-white/10 backdrop-blur-2xl rounded-3xl border border-white/20 shadow-2xl overflow-hidden">
-            <div className="p-8 border-b border-white/10">
-              <h3 className="text-2xl font-black bg-gradient-to-r from-white via-blue-100 to-purple-100 bg-clip-text text-transparent">
-                Project Status Breakdown
-              </h3>
-            </div>
-            <div className="p-8 space-y-6">
-              <div className="space-y-4 max-height-80 overflow-y-auto">
-                {projectStatus.map(({ status, count, percentage }) => (
-                  <div
-                    key={status}
-                    className="group p-6 rounded-2xl border border-white/20 hover:border-white/40 transition-all duration-300 hover:bg-white/20 backdrop-blur-xl shadow-xl hover:shadow-2xl hover:-translate-y-1"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-4">
-                        <div
-                          className={`w-12 h-12 rounded-2xl flex items-center justify-center shadow-xl bg-gradient-to-br ${getStatusGradient(
-                            status
-                          )}`}
-                        >
-                          <span className="text-2xl font-bold">●</span>
-                        </div>
-                        <div>
-                          <p className="font-bold text-lg text-white capitalize">
-                            {status}
-                          </p>
-                          <p className="text-sm text-white/70">
-                            {percentage}% of total
-                          </p>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-3xl font-black text-white">
-                          {count}
-                        </p>
-                        <div className="w-24 h-2 bg-white/20 rounded-full mt-2 overflow-hidden">
-                          <div
-                            className={`h-full rounded-full shadow-lg bg-gradient-to-r ${getStatusGradient(
-                              status
-                            )}`}
-                            style={{ width: `${percentage}%` }}
-                          />
-                        </div>
-                      </div>
                     </div>
                   </div>
-                ))}
-                {projectStatus.length === 0 && (
-                  <p className="text-sm text-white/70 text-center">
-                    No projects yet.
-                  </p>
-                )}
-              </div>
+                  <div className="relative pb-3 text-center">
+                    <p className="text-xs font-semibold text-slate-800">
+                      {status}
+                    </p>
+                    <p className="text-[11px] text-slate-400">{percentage}%</p>
+                  </div>
+                </div>
+              ))}
+              {projectStatus.length === 0 && (
+                <p className="col-span-3 text-xs text-slate-400 text-center py-8">
+                  No task data yet.
+                </p>
+              )}
             </div>
           </section>
 
-          {/* Recent Projects – new professional layout */}
-          <section className="bg-white/10 backdrop-blur-2xl rounded-3xl border border-white/20 shadow-2xl overflow-hidden">
-            <div className="p-8 border-b border-white/10">
-              <h3 className="text-2xl font-black bg-gradient-to-r from-white via-blue-100 to-purple-100 bg-clip-text text-transparent">
-                Recent Projects
-              </h3>
+          {/* Recent tasks */}
+          <section className="bg-white/70 backdrop-blur-xl rounded-3xl border border-white shadow-sm p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-sm font-semibold text-slate-800">
+                Working history (recent tasks)
+              </h2>
+              <button
+                type="button"
+                onClick={onViewTasks}
+                className="text-[11px] text-sky-500 font-semibold hover:text-sky-600 transition-colors"
+              >
+                Show all
+              </button>
             </div>
+
             <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-white/5">
-                  <tr>
-                    <th className="px-8 py-4 text-left text-sm font-semibold text-white/80">
-                      Project
-                    </th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-white/80">
-                      Status
-                    </th>
-                    <th className="px-8 py-4 text-left text-sm font-semibold text-white/80">
-                      Priority
-                    </th>
+              <table className="w-full text-xs">
+                <thead>
+                  <tr className="text-left text-[11px] text-slate-400">
+                    <th className="py-2 pr-4 font-medium">Task</th>
+                    <th className="py-2 pr-4 font-medium">Status</th>
+                    <th className="py-2 pr-4 font-medium">Priority</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-white/10">
+                <tbody className="divide-y divide-slate-100">
                   {recentTasks.map((task) => {
                     const displayStatus = normalizeStatus(task.status);
 
                     const statusClasses =
                       displayStatus === "Completed"
-                        ? "bg-emerald-500 text-white shadow-emerald-500/40"
+                        ? "bg-emerald-100 text-emerald-700"
                         : displayStatus === "In Progress"
-                        ? "bg-amber-400 text-slate-900 shadow-amber-400/40"
-                        : "bg-slate-600 text-white shadow-slate-500/40";
+                        ? "bg-amber-100 text-amber-700"
+                        : "bg-slate-100 text-slate-700";
 
                     const priorityClasses =
                       task.priority === "High" || task.priority === "Most Urgent"
-                        ? "bg-red-500 text-white shadow-red-500/40"
-                        : task.priority === "Medium" || task.priority === "Normal"
-                        ? "bg-amber-500 text-white shadow-amber-500/40"
-                        : "bg-emerald-500 text-white shadow-emerald-500/40";
+                        ? "bg-red-100 text-red-700"
+                        : task.priority === "Medium" ||
+                          task.priority === "Normal"
+                        ? "bg-amber-100 text-amber-700"
+                        : "bg-emerald-100 text-emerald-700";
 
                     return (
                       <tr
                         key={task.id}
-                        className="hover:bg-white/5 transition-all duration-300"
+                        className="hover:bg-slate-50/80 transition-colors"
                       >
-                        {/* Project */}
-                        <td className="px-8 py-5 align-middle">
-                          <div className="flex items-center gap-4">
-                            <div className="w-10 h-10 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center shadow-md">
-                              <span className="text-lg">📄</span>
+                        <td className="py-3 pr-4 align-middle">
+                          <div className="flex items-center gap-3">
+                            <div className="h-8 w-8 rounded-2xl bg-slate-100 flex items-center justify-center text-sm">
+                              📄
                             </div>
                             <div className="min-w-0">
-                              <p className="font-semibold text-white text-sm md:text-base truncate">
+                              <p className="text-xs font-semibold text-slate-800 truncate">
                                 {task.title}
                               </p>
                               {task.projectTitle && (
-                                <p className="text-xs md:text-sm text-white/60 truncate">
+                                <p className="text-[11px] text-slate-400 truncate">
                                   {task.projectTitle}
                                 </p>
                               )}
                             </div>
                           </div>
                         </td>
-
-                        {/* Status pill */}
-                        <td className="px-6 py-5 align-middle">
-                          <div className="inline-flex items-center gap-2 rounded-full bg-white/5 border border-white/10 px-1.5 py-1">
-                            <span
-                              className={`inline-flex items-center justify-center px-4 py-1.5 rounded-full text-xs font-semibold capitalize whitespace-nowrap ${statusClasses}`}
-                            >
-                              {displayStatus}
-                            </span>
-                          </div>
-                        </td>
-
-                        {/* Priority pill */}
-                        <td className="px-8 py-5 align-middle">
+                        <td className="py-3 pr-4 align-middle">
                           <span
-                            className={`inline-flex items-center justify-center px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap ${priorityClasses}`}
+                            className={`inline-flex items-center px-3 py-1 rounded-full text-[11px] font-semibold capitalize ${statusClasses}`}
+                          >
+                            {displayStatus}
+                          </span>
+                        </td>
+                        <td className="py-3 pr-4 align-middle">
+                          <span
+                            className={`inline-flex items-center px-3 py-1 rounded-full text-[11px] font-semibold ${priorityClasses}`}
                           >
                             {task.priority || "Normal"}
                           </span>
@@ -514,11 +558,11 @@ const Dashboard = ({ currentUserEmail }) => {
                       </tr>
                     );
                   })}
-                  {recentTasks.length === 0 && (
+                  {!recentTasks.length && (
                     <tr>
                       <td
                         colSpan={3}
-                        className="px-8 py-10 text-center text-white/70 text-sm"
+                        className="py-6 text-center text-xs text-slate-400"
                       >
                         No tasks found.
                       </td>
@@ -530,65 +574,105 @@ const Dashboard = ({ currentUserEmail }) => {
           </section>
         </div>
 
-        {/* Admin Session */}
-        <section className="bg-white/5 backdrop-blur-3xl rounded-3xl border border_WHITE/10 shadow-2xl overflow-hidden">
-          <div className="px-8 py-8 border-b border-white/10">
-            <h2 className="text-2xl font-black bg-gradient-to-r from-white via-blue-100 to-purple-100 bg-clip-text text-transparent">
-              Current Session
+        {/* BOTTOM ROW: focus card + admin session */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-4">
+          <section className="lg:col-span-2 bg-white/70 backdrop-blur-xl rounded-3xl border border-white shadow-sm p-5 overflow-hidden relative transition-all duration-500 hover:-translate-y-1.5 hover:shadow-2xl">
+            <div className="pointer-events-none absolute -inset-x-40 -top-1/2 h-full bg-gradient-to-r from-transparent via-sky-100/60 to-transparent animate-[pulse_5s_ease-in-out_infinite]" />
+            <div className="relative flex items-center justify-between mb-3">
+              <h2 className="text-sm font-semibold text-slate-800">
+                Focus this week
+              </h2>
+              <span className="text-[11px] text-slate-400">
+                summary of current workload
+              </span>
+            </div>
+
+            <div className="relative grid grid-cols-3 gap-3 text-xs text-slate-600 mt-2">
+              <div className="rounded-2xl border border-slate-100 bg-white/80 px-3 py-3 flex flex-col gap-1 transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
+                <span className="text-[11px] text-slate-400">Completed</span>
+                <span className="text-base font-semibold text-emerald-600">
+                  {completedProjects}
+                </span>
+                <span className="text-[11px] text-emerald-500">
+                  Keep this momentum
+                </span>
+              </div>
+              <div className="rounded-2xl border border-slate-100 bg-white/80 px-3 py-3 flex flex-col gap-1 transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
+                <span className="text-[11px] text-slate-400">In progress</span>
+                <span className="text-base font-semibold text-amber-500">
+                  {inProgressProjects}
+                </span>
+                <span className="text-[11px] text-amber-500">
+                  Prioritize critical tasks
+                </span>
+              </div>
+              <div className="rounded-2xl border border-slate-100 bg-white/80 px-3 py-3 flex flex-col gap-1 transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
+                <span className="text-[11px] text-slate-400">Pending</span>
+                <span className="text-base font-semibold text-slate-700">
+                  {Math.max(
+                    0,
+                    totalProjects - completedProjects - inProgressProjects
+                  )}
+                </span>
+                <span className="text-[11px] text-slate-500">
+                  Plan for next sprint
+                </span>
+              </div>
+            </div>
+
+            <div className="relative mt-4 flex items-center justify-between text-[11px] text-slate-500">
+              <p>
+                You are currently at{" "}
+                <span className="font-semibold text-slate-800">
+                  {projectCompletionRate || 0}%
+                </span>{" "}
+                completion across all active project tasks.
+              </p>
+              <button
+                type="button"
+                onClick={onViewTasks}
+                className="inline-flex items-center gap-1 text-sky-600 font-semibold hover:text-sky-700 transition-colors"
+              >
+                Review tasks
+                <span>↗</span>
+              </button>
+            </div>
+          </section>
+
+          <section className="bg-white/70 backdrop-blur-xl rounded-3xl border border-white shadow-sm p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+            <h2 className="text-sm font-semibold text-slate-800 mb-3">
+              Current admin session
             </h2>
-          </div>
-          <div className="px-8 py-12">
             {!currentAdmin ? (
-              <div className="text-center py-16">
-                <div className="w-24 h-24 bg-white/20 rounded-3xl mx-auto mb-6 backdrop-blur-xl flex items-center justify-center shadow-2xl">
-                  <span className="text-3xl">👤</span>
+              <div className="flex flex-col items-center justify-center py-10">
+                <div className="h-12 w-12 rounded-2xl bg-slate-100 flex items-center justify-center mb-3">
+                  👤
                 </div>
-                <p className="text-xl text-white/80 font-bold">
-                  No admin session active
+                <p className="text-xs text-slate-500">
+                  No active admin session.
                 </p>
               </div>
             ) : (
-              <div className="max-w-md mx-auto">
-                <div className="flex items-center gap-6 p-8 bg_WHITE/10 backdrop-blur-xl rounded-3xl border border-white/20 shadow-2xl">
-                  <div className="w-20 h-20 bg-gradient-to-r from-indigo-400 to-purple-500 rounded-2xl flex items-center justify-center shadow-xl">
-                    <span className="text-2xl font-bold text-white">A</span>
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-lg font-bold text-white">
-                      {currentAdmin.email}
-                    </p>
-                    <p className="text-sm text-white/70">Active Admin</p>
-                    <p className="text-xs text_WHITE/60 mt-2">
-                      <span className="font-semibold">Last Login:</span>{" "}
+              <div className="flex items-center gap-4 bg-sky-50 rounded-2xl p-4 border border-sky-100">
+                <div className="h-10 w-10 rounded-2xl bg-sky-500 text-white flex items-center justify-center text-sm font-semibold">
+                  {currentAdmin.email[0]?.toUpperCase()}
+                </div>
+                <div className="flex-1">
+                  <p className="text-xs font-semibold text-slate-800 mb-1">
+                    {currentAdmin.email}
+                  </p>
+                  <p className="text-[11px] text-slate-400">
+                    Active since{" "}
+                    <span className="font-medium text-slate-700">
                       {formatTime(latestSession?.loginAt)}
-                    </p>
-                  </div>
+                    </span>
+                  </p>
                 </div>
               </div>
             )}
-          </div>
-        </section>
-      </main>
-
-      <style jsx>{`
-        @keyframes shimmer {
-          0% {
-            transform: translateX(-100%);
-          }
-          100% {
-            transform: translateX(100%);
-          }
-        }
-        .animate-shimmer {
-          background: linear-gradient(
-            90deg,
-            transparent,
-            rgba(255, 255, 255, 0.4),
-            transparent
-          );
-          animation: shimmer 2s infinite;
-        }
-      `}</style>
+          </section>
+        </div>
+      </div>
     </div>
   );
 };

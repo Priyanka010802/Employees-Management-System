@@ -21,6 +21,12 @@ const sampleEmployees = [
   { id: "emp_david", name: "David Kim", role: "Analyst", department: "Finance" }
 ];
 
+const statusGroups = [
+  { key: "pending", label: "To‑do", color: "bg-emerald-500" },
+  { key: "in-progress", label: "In Progress", color: "bg-amber-400" },
+  { key: "completed", label: "Completed", color: "bg-rose-500" }
+];
+
 const Tasks = () => {
   const [tasks, setTasks] = useState([]);
   const [serverStatus, setServerStatus] = useState("idle");
@@ -43,7 +49,6 @@ const Tasks = () => {
   const [viewingTask, setViewingTask] = useState(null);
 
   // ---------- API helpers ----------
-
   const apiCall = async (path, options = {}) => {
     try {
       setServerStatus("loading");
@@ -100,7 +105,6 @@ const Tasks = () => {
   }, []);
 
   // ---------- helpers ----------
-
   const teamCount = (task) =>
     Array.isArray(task.team) ? task.team.length : 0;
 
@@ -140,8 +144,15 @@ const Tasks = () => {
       .join(", ");
   };
 
-  // ---------- Add form ----------
+  const overallProgress =
+    tasks.length > 0
+      ? Math.round(
+          tasks.reduce((sum, t) => sum + (Number(t.progress) || 0), 0) /
+            tasks.length
+        )
+      : 0;
 
+  // ---------- Add form ----------
   const startAddTask = () => {
     setAddForm(emptyTask);
     setSelectedEmployeeIdsAdd([]);
@@ -172,6 +183,8 @@ const Tasks = () => {
     e.preventDefault();
     if (!addForm.title.trim()) return;
 
+    addSelectedEmployeesToForm(selectedEmployeeIdsAdd, setAddForm);
+
     const now = new Date().toISOString().slice(0, 16).replace("T", " ");
 
     const payload = {
@@ -193,12 +206,11 @@ const Tasks = () => {
       setSelectedEmployeeIdsAdd([]);
       await loadTasks();
     } catch {
-      /* handled in apiCall */
+      // handled in apiCall
     }
   };
 
   // ---------- Edit form ----------
-
   const startEditTask = (task) => {
     setEditingId(task.id);
     setEditForm({
@@ -240,6 +252,8 @@ const Tasks = () => {
     e.preventDefault();
     if (!editForm.title.trim() || !editingId) return;
 
+    addSelectedEmployeesToForm(selectedEmployeeIdsEdit, setEditForm);
+
     const payload = {
       projectTitle: editForm.projectTitle || "",
       title: editForm.title.trim(),
@@ -263,412 +277,483 @@ const Tasks = () => {
       setSelectedEmployeeIdsEdit([]);
       await loadTasks();
     } catch {
-      /* handled in apiCall */
+      // handled in apiCall
     }
   };
 
   // ---------- View modal ----------
-
   const openView = (task) => setViewingTask(task);
   const closeView = () => setViewingTask(null);
 
   // ---------- UI ----------
+  const groupedTasks = statusGroups.map((group) => ({
+    ...group,
+    items: tasks.filter((t) => t.status === group.key)
+  }));
+
+  const priorityClass = (p) => {
+    if (p === "High")
+      return "bg-rose-50 text-rose-700 border-rose-100";
+    if (p === "Low")
+      return "bg-sky-50 text-sky-700 border-sky-100";
+    return "bg-amber-50 text-amber-700 border-amber-100";
+  };
 
   return (
-    <div className="flex-1 min-h-screen bg-gradient-to-br from-[#5A6BFF] via-[#A455FF] to-[#FF5BC0] px-4 md:px-10 py-8 relative overflow-hidden">
-      {/* background glow */}
-      <div className="pointer-events-none absolute inset-0 opacity-40">
-        <div className="absolute -top-40 -left-40 w-80 h-80 rounded-full bg-white/25 blur-3xl" />
-        <div className="absolute -bottom-40 -right-40 w-80 h-80 rounded-full bg-white/20 blur-3xl" />
-      </div>
-
-      <div className="relative max-w-6xl mx-auto space-y-8">
-        {/* hero card */}
-        <section className="mt-4">
-          <div className="rounded-[32px] bg-white/10 backdrop-blur-3xl border border-white/25 shadow-[0_32px_80px_rgba(15,23,42,0.4)] px-6 md:px-10 py-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.25em] text-white/80 mb-2">
-                HR SPACE
-              </p>
-              <h1 className="text-3xl md:text-4xl font-extrabold leading-tight text-white drop-shadow-lg">
-                Task
-                <br />
-                Management
-              </h1>
-              <button className="mt-4 inline-flex items-center gap-2 bg-white text-[#6C4CFF] text-xs font-semibold px-4 py-2 rounded-full shadow-lg">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                {tasks.length} task{tasks.length === 1 ? "" : "s"} active
-              </button>
+    <div className="flex-1 min-h-screen bg-slate-50 relative">
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-sky-100 via-white to-slate-100" />
+      <div className="relative max-w-7xl mx-auto px-3 md:px-6 py-4 space-y-5 md:space-y-6">
+        {/* header */}
+        <header className="rounded-3xl bg-white border border-slate-200 shadow-sm px-4 md:px-6 py-4 flex flex-col gap-4">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-2xl bg-sky-100 flex items-center justify-center text-sky-500 text-xl animate-pulse">
+                📌
+              </div>
+              <div>
+                <h1 className="text-base md:text-lg font-semibold text-slate-900">
+                  Project Tasks
+                </h1>
+                <p className="text-xs md:text-sm text-slate-500">
+                  Add project tasks and assign members in a clean table view.
+                </p>
+              </div>
             </div>
 
-            <div className="flex flex-col md:items-end gap-3 w-full md:w-auto">
-              <div className="flex items-center gap-3 w-full justify-end">
-                <span
-                  className={`px-3 py-2 rounded-2xl text-xs font-semibold ${
-                    serverStatus === "connected"
-                      ? "bg-emerald-400/20 text-emerald-100 border border-emerald-300/70"
-                      : serverStatus === "error"
-                      ? "bg-rose-500/20 text-rose-100 border border-rose-300/70"
-                      : "bg-white/15 text-white border border-white/40"
-                  }`}
-                >
-                  API:{" "}
-                  {serverStatus === "connected"
-                    ? "Online"
-                    : serverStatus === "error"
-                    ? "Offline"
-                    : "Checking..."}
-                </span>
+            <div className="flex items-center gap-3 self-start md:self-auto">
+              <div className="hidden md:flex items-center -space-x-2">
+                {employees.slice(0, 4).map((e) => (
+                  <div
+                    key={e.id}
+                    className="h-8 w-8 rounded-full border-2 border-white bg-slate-200 text-[11px] flex items-center justify-center text-slate-700"
+                  >
+                    {e.name.charAt(0)}
+                  </div>
+                ))}
+                {employees.length > 4 && (
+                  <div className="h-8 w-8 rounded-full border-2 border-white bg-slate-100 text-[11px] flex items-center justify-center text-slate-600">
+                    +{employees.length - 4}
+                  </div>
+                )}
               </div>
               <button
                 onClick={startAddTask}
-                className="group relative inline-flex items-center justify-center gap-2 px-6 py-3 rounded-2xl bg-emerald-400 text-slate-900 text-sm font-bold shadow-xl hover:shadow-2xl hover:bg-emerald-300 transition-transform duration-300 hover:-translate-y-0.5"
+                className="group inline-flex items-center gap-2 rounded-full bg-sky-500 text-white text-xs md:text-sm font-semibold px-4 py-2 shadow-sm hover:bg-sky-600 transition-all duration-200 hover:-translate-y-0.5"
               >
-                <span className="text-lg leading-none">＋</span>
-                <span>Add Task</span>
-                <div className="absolute inset-0 rounded-2xl border border-white/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <span className="text-sm">＋</span>
+                <span>Add Project Task</span>
+                <span className="ml-1 h-1.5 w-6 rounded-full bg-white/60 group-hover:w-8 transition-all duration-300" />
               </button>
             </div>
           </div>
-        </section>
 
-        {/* task list card */}
-        <section className="rounded-[28px] bg-white/10 backdrop-blur-3xl border border-white/20 shadow-[0_24px_60px_rgba(15,23,42,0.45)] p-4 md:p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-sm md:text-base font-semibold text-white">
-              Project Tasks ({tasks.length})
-            </h2>
+          {/* overall progress + status */}
+          <div className="flex items-center gap-3">
+            <div className="flex-1 h-1.5 rounded-full bg-slate-100 overflow-hidden">
+              <div
+                className="h-1.5 rounded-full bg-gradient-to-r from-sky-500 to-emerald-500 transition-all duration-500"
+                style={{ width: `${overallProgress}%` }}
+              />
+            </div>
+            <span className="text-xs text-slate-500">
+              {overallProgress}% Completed
+            </span>
+            <span
+              className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] border ${
+                serverStatus === "connected"
+                  ? "bg-emerald-50 border-emerald-200 text-emerald-700"
+                  : serverStatus === "error"
+                  ? "bg-rose-50 border-rose-200 text-rose-700"
+                  : "bg-amber-50 border-amber-200 text-amber-700"
+              }`}
+            >
+              <span
+                className={`w-1.5 h-1.5 rounded-full animate-pulse ${
+                  serverStatus === "connected"
+                    ? "bg-emerald-500"
+                    : serverStatus === "error"
+                    ? "bg-rose-500"
+                    : "bg-amber-400"
+                }`}
+              />
+              API {serverStatus}
+            </span>
           </div>
+        </header>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {tasks.map((task) => (
-              <button
-                key={task.id}
-                type="button"
-                onClick={() => openView(task)}
-                className="group text-left rounded-2xl bg-white/10 border border-white/10 hover:border-white/40 hover:bg-white/15 transition-all duration-300 p-4 flex flex-col justify-between"
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    {task.projectTitle && (
-                      <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 text-[11px] text-white/90">
-                        <span className="w-1.5 h-1.5 rounded-full bg-sky-300" />
-                        {task.projectTitle}
-                      </div>
-                    )}
-                    <h3 className="mt-2 text-base font-semibold text-white">
-                      {task.title}
-                    </h3>
-                    <p className="mt-1 text-[12px] text-white/80 line-clamp-2">
-                      {task.description || "No description"}
-                    </p>
-                    <p className="mt-1 text-[11px] text-white/70">
-                      {task.assignDate} → {task.finishDate || "TBD"}
-                    </p>
-                  </div>
-                  <span
-                    className={`text-[11px] px-2 py-1 rounded-full border capitalize ${
-                      task.status === "completed"
-                        ? "border-emerald-300 bg-emerald-500/20 text-emerald-100"
-                        : task.status === "inprogress"
-                        ? "border-amber-300 bg-amber-500/20 text-amber-100"
-                        : "border-white/30 bg-white/10 text-white/80"
-                    }`}
-                  >
-                    {task.status || "pending"}
-                  </span>
-                </div>
-
-                <div className="mt-4 flex items-center justify-between text-[11px] text-white/80">
-                  <div className="flex flex-col gap-1 w-2/3">
-                    <div className="w-full bg-slate-900/60 rounded-2xl h-2.5 overflow-hidden">
-                      <div
-                        className="h-2.5 bg-gradient-to-r from-emerald-400 via-emerald-500 to-emerald-600 rounded-2xl transition-all duration-700"
-                        style={{ width: `${task.progress || 0}%` }}
+        {/* grouped table sections (no sort / label / filters / board / timeline) */}
+        <section className="rounded-3xl bg-white border border-slate-200 shadow-sm overflow-hidden">
+          <div className="divide-y divide-slate-100">
+            {statusGroups.map((group) => {
+              const items = groupedTasks.find((g) => g.key === group.key)
+                ?.items || [];
+              return (
+                <div key={group.key} className="bg-white">
+                  {/* group header */}
+                  <div className="px-4 md:px-6 py-3 flex items-center justify-between bg-slate-50/60">
+                    <div className="flex items-center gap-2">
+                      <span
+                        className={`w-1.5 h-6 rounded-full ${group.color}`}
                       />
+                      <p className="text-sm font-semibold text-slate-900">
+                        {group.label}
+                      </p>
+                      <span className="text-xs text-slate-400 animate-pulse">
+                        {items.length}
+                      </span>
                     </div>
-                    <span className="text-[10px]">
-                      {task.progress || 0}% complete • {teamCount(task)}{" "}
-                      member{teamCount(task) === 1 ? "" : "s"}
-                    </span>
+                    <button
+                      onClick={startAddTask}
+                      className="text-xs text-slate-500 hover:text-slate-800 transition-colors"
+                    >
+                      + Add task
+                    </button>
                   </div>
 
-                  <div className="flex gap-2">
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        startEditTask(task);
-                      }}
-                      className="px-3 py-1 rounded-full bg-white/20 text-white text-[10px] hover:bg-white/30"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      type="button"
-                      onClick={async (e) => {
-                        e.stopPropagation();
-                        if (!window.confirm("Delete this task?")) return;
-                        try {
-                          await apiCall(`/tasks/${task.id}`, {
-                            method: "DELETE"
-                          });
-                          loadTasks();
-                        } catch {
-                          /* ignore */
-                        }
-                      }}
-                      className="px-3 py-1 rounded-full bg-rose-500 text-white text-[10px] hover:bg-rose-400"
-                    >
-                      Delete
-                    </button>
+                  {/* header row */}
+                  <div className="px-4 md:px-6 py-2 border-t border-slate-100 text-[11px] text-slate-400 uppercase hidden md:grid md:grid-cols-[16px_minmax(0,2fr)_minmax(0,2fr)_130px_150px_150px_150px]">
+                    <div />
+                    <div>Task name</div>
+                    <div>Description</div>
+                    <div>Deadline</div>
+                    {/* <div>People</div> */}
+                    <div>Progress</div>
+                    <div className="text-right">Actions</div>
                   </div>
+
+                  {/* rows */}
+                  {items.map((task) => (
+                    <div
+                      key={task.id}
+                      className="px-4 md:px-6 py-3 border-t border-slate-100 grid grid-cols-1 md:grid-cols-[16px_minmax(0,2fr)_minmax(0,2fr)_130px_150px_150px_150px] gap-y-2 items-center transition-all duration-200 hover:bg-slate-50/80 hover:-translate-y-0.5 hover:shadow-sm"
+                    >
+                      {/* checkbox */}
+                      <div className="flex items-center justify-start">
+                        <input
+                          type="checkbox"
+                          className="h-3.5 w-3.5 rounded border-slate-300 text-sky-500 focus:ring-sky-500"
+                        />
+                      </div>
+
+                      {/* task name + project */}
+                      <div className="min-w-0">
+                        <p className="text-sm font-semibold text-slate-900 truncate">
+                          {task.title || "Untitled task"}
+                        </p>
+                        <p className="text-[11px] text-slate-400 truncate">
+                          {task.projectTitle || "No project"}
+                        </p>
+                      </div>
+
+                      {/* description */}
+                      <div className="min-w-0 text-xs text-slate-500 truncate">
+                        {task.description || "—"}
+                      </div>
+
+                      {/* deadline */}
+                      <div className="text-xs text-slate-700">
+                        {task.finishDate || "No date"}
+                      </div>
+
+                      {/* people */}
+                      <div className="flex items-center gap-1">
+                        {Array.isArray(task.team) && task.team.length > 0 ? (
+                          <>
+                            {task.team.slice(0, 3).map((m) => (
+                              <div
+                                key={m.id}
+                                className="h-7 w-7 rounded-full bg-slate-200 text-[10px] flex items-center justify-center text-slate-700 border border-white -ml-1 first:ml-0"
+                              >
+                                {m.name?.charAt(0) || "U"}
+                              </div>
+                            ))}
+                            {teamCount(task) > 3 && (
+                              <div className="h-7 w-7 rounded-full bg-slate-100 text-[10px] flex items-center justify-center text-slate-600 border border-white -ml-1">
+                                +{teamCount(task) - 3}
+                              </div>
+                            )}
+                          </>
+                        ) : (
+                          <span className="text-[11px] text-slate-400">
+                            No members
+                          </span>
+                        )}
+                      </div>
+
+                      {/* progress */}
+                      <div className="flex items-center gap-2">
+                        <div className="flex-1 h-1.5 rounded-full bg-slate-100 overflow-hidden">
+                          <div
+                            className={`h-1.5 rounded-full ${
+                              group.key === "completed"
+                                ? "bg-emerald-500"
+                                : "bg-sky-500"
+                            } transition-all duration-500`}
+                            style={{
+                              width: `${Math.min(
+                                100,
+                                Number(task.progress) || 0
+                              )}%`
+                            }}
+                          />
+                        </div>
+                        <span className="text-[11px] text-slate-500 w-8 text-right">
+                          {Math.min(100, Number(task.progress) || 0)}%
+                        </span>
+                      </div>
+
+                      {/* actions: Update + Add Member + View */}
+                      <div className="flex items-center justify-end gap-2">
+                        <button
+                          onClick={() => startEditTask(task)}
+                          className="px-3 py-1.5 rounded-full bg-sky-500 text-white text-[11px] font-semibold shadow-sm hover:bg-sky-600 transition-all"
+                        >
+                          Update
+                        </button>
+                        <button
+                          onClick={() => startEditTask(task)}
+                          className="px-3 py-1.5 rounded-full bg-slate-50 text-[11px] text-slate-700 border border-slate-200 hover:bg-slate-100 transition-all"
+                        >
+                          Add Members
+                        </button>
+                        <button
+                          onClick={() => openView(task)}
+                          className="h-8 w-8 rounded-full bg-slate-50 text-slate-500 flex items-center justify-center hover:bg-slate-100 transition-colors"
+                          title="View details"
+                        >
+                          ⋯
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+
+                  {items.length === 0 && (
+                    <div className="px-4 md:px-6 py-6 text-xs text-slate-400">
+                      No tasks in this section.
+                    </div>
+                  )}
                 </div>
-              </button>
-            ))}
-
-            {tasks.length === 0 && (
-              <div className="col-span-1 md:col-span-2 text-center text-white/80 py-10">
-                No tasks yet. Click “Add Task” to create your first one.
-              </div>
-            )}
+              );
+            })}
           </div>
         </section>
 
-        {/* ADD PANEL */}
+        {/* Add Task drawer */}
         {isAddOpen && (
-          <div className="fixed inset-0 z-40 flex justify-end">
+          <div className="fixed inset-0 z-40 flex justify-end bg-black/30 backdrop-blur-sm">
             <div
-              className="flex-1 bg-black/40"
+              className="flex-1"
               onClick={() => {
                 setIsAddOpen(false);
                 setAddForm(emptyTask);
                 setSelectedEmployeeIdsAdd([]);
               }}
             />
-            <div className="w-full max-w-md bg-slate-950/95 border-l border-white/10 shadow-2xl p-6 overflow-y-auto">
-              <h3 className="text-lg font-bold text-white mb-1">Add Task</h3>
-              <p className="text-xs text-white/70 mb-4">
-                Create a new project task and pick team members from Employees.
-              </p>
-
-              <form onSubmit={submitAddTask} className="space-y-4 text-sm">
+            <div className="w-full max-w-md bg-white h-full shadow-2xl border-l border-slate-200 flex flex-col animate-[slideIn_0.25s_ease-out]">
+              <header className="px-4 py-3 border-b border-slate-200 flex items-center justify-between">
                 <div>
-                  <label className="block text-[11px] font-semibold text-white/80 mb-1">
-                    Project Title
+                  <p className="text-sm font-semibold text-slate-900">
+                    Add project task
+                  </p>
+                  <p className="text-[11px] text-slate-500">
+                    Create a new task and assign members.
+                  </p>
+                </div>
+                <button
+                  onClick={() => {
+                    setIsAddOpen(false);
+                    setAddForm(emptyTask);
+                    setSelectedEmployeeIdsAdd([]);
+                  }}
+                  className="w-7 h-7 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center"
+                >
+                  ×
+                </button>
+              </header>
+
+              <form
+                onSubmit={submitAddTask}
+                className="flex-1 overflow-y-auto px-4 py-4 space-y-4 text-xs"
+              >
+                <div className="space-y-1.5">
+                  <label className="font-medium text-slate-700">
+                    Project title
                   </label>
                   <input
                     name="projectTitle"
                     value={addForm.projectTitle}
                     onChange={handleAddChange}
-                    className="w-full rounded-xl bg-slate-900 border border-white/20 px-3 py-2 text-white"
-                    placeholder="e.g. Employee Portal Revamp"
+                    className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-sky-500/60"
+                    placeholder="e.g. Employee Portal"
                   />
                 </div>
 
-                <div>
-                  <label className="block text-[11px] font-semibold text-white/80 mb-1">
-                    Task Title *
+                <div className="space-y-1.5">
+                  <label className="font-medium text-slate-700">
+                    Task name *
                   </label>
                   <input
                     name="title"
                     value={addForm.title}
                     onChange={handleAddChange}
                     required
-                    className="w-full rounded-xl bg-slate-900 border border-white/20 px-3 py-2 text-white"
-                    placeholder="e.g. Prepare bill for laptop"
+                    className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-sky-500/60"
+                    placeholder="Design employee directory"
                   />
                 </div>
 
-                <div>
-                  <label className="block text-[11px] font-semibold text-white/80 mb-1">
-                    Description / Remark
+                <div className="space-y-1.5">
+                  <label className="font-medium text-slate-700">
+                    Description
                   </label>
                   <textarea
                     name="description"
                     value={addForm.description}
                     onChange={handleAddChange}
                     rows={3}
-                    className="w-full rounded-xl bg-slate-900 border border-white/20 px-3 py-2 text-white resize-none"
-                    placeholder="Short summary of this task"
+                    className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-sky-500/60 resize-none"
+                    placeholder="Short summary of the work"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-[11px] font-semibold text-white/80 mb-1">
-                      Assign Date
+                  <div className="space-y-1.5">
+                    <label className="font-medium text-slate-700">
+                      Start / assign date
                     </label>
                     <input
+                      type="date"
                       name="assignDate"
                       value={addForm.assignDate}
                       onChange={handleAddChange}
-                      className="w-full rounded-xl bg-slate-900 border border-white/20 px-3 py-2 text-white"
-                      placeholder="YYYY-MM-DD HH:MM"
+                      className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-sky-500/60"
                     />
                   </div>
-                  <div>
-                    <label className="block text-[11px] font-semibold text-white/80 mb-1">
-                      Finish Date
+                  <div className="space-y-1.5">
+                    <label className="font-medium text-slate-700">
+                      Deadline
                     </label>
                     <input
+                      type="date"
                       name="finishDate"
                       value={addForm.finishDate}
                       onChange={handleAddChange}
-                      className="w-full rounded-xl bg-slate-900 border border-white/20 px-3 py-2 text-white"
-                      placeholder="YYYY-MM-DD"
+                      className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-sky-500/60"
                     />
                   </div>
                 </div>
 
-                <div className="grid grid-cols-3 gap-3">
-                  <div>
-                    <label className="block text-[11px] font-semibold text-white/80 mb-1">
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1.5">
+                    <label className="font-medium text-slate-700">
                       Priority
                     </label>
                     <select
                       name="priority"
                       value={addForm.priority}
                       onChange={handleAddChange}
-                      className="w-full rounded-xl bg-slate-900 border border-white/20 px-3 py-2 text-white"
+                      className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-sky-500/60"
                     >
-                      <option>Low</option>
-                      <option>Normal</option>
-                      <option>High</option>
-                      <option>Most Urgent</option>
+                      <option value="Low">Low</option>
+                      <option value="Normal">Medium</option>
+                      <option value="High">High</option>
                     </select>
                   </div>
-                  <div>
-                    <label className="block text-[11px] font-semibold text-white/80 mb-1">
+                  <div className="space-y-1.5">
+                    <label className="font-medium text-slate-700">
                       Status
                     </label>
                     <select
                       name="status"
                       value={addForm.status}
                       onChange={handleAddChange}
-                      className="w-full rounded-xl bg-slate-900 border border-white/20 px-3 py-2 text-white"
+                      className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-sky-500/60"
                     >
-                      <option value="pending">Pending</option>
-                      <option value="inprogress">Inprogress</option>
+                      <option value="pending">To‑do</option>
+                      <option value="in-progress">In Progress</option>
                       <option value="completed">Completed</option>
                     </select>
                   </div>
-                  <div>
-                    <label className="block text-[11px] font-semibold text-white/80 mb-1">
-                      Progress %
-                    </label>
-                    <input
-                      name="progress"
-                      type="number"
-                      min="0"
-                      max="100"
-                      value={addForm.progress}
-                      onChange={handleAddChange}
-                      className="w-full rounded-xl bg-slate-900 border border-white/20 px-3 py-2 text-white"
-                    />
-                  </div>
                 </div>
 
-                {/* employees selection */}
-                <div className="border-t border-white/10 pt-3 mt-2 space-y-2">
+                <div className="space-y-1.5">
+                  <label className="font-medium text-slate-700">
+                    Progress (%)
+                  </label>
+                  <input
+                    type="number"
+                    name="progress"
+                    value={addForm.progress}
+                    onChange={handleAddChange}
+                    min={0}
+                    max={100}
+                    className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-sky-500/60"
+                  />
+                </div>
+
+                {/* team picker */}
+                <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-semibold text-white/80">
-                      Assign from Employees
-                    </span>
-                    <span className="text-[11px] text-white/60">
-                      Select cards then click Add
+                    <label className="font-medium text-slate-700">
+                      Add members
+                    </label>
+                    <span className="text-[11px] text-slate-400">
+                      Selected: {teamCount(addForm)}
                     </span>
                   </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                  <div className="flex flex-wrap gap-2 text-[11px]">
                     {employeesLoaded ? (
                       employees.map((emp) => {
-                        const selected = selectedEmployeeIdsAdd.includes(emp.id);
+                        const selected = selectedEmployeeIdsAdd.includes(
+                          String(emp.id)
+                        );
                         return (
                           <button
-                            key={emp.id}
                             type="button"
-                            onClick={() => toggleSelectEmpAdd(emp.id)}
-                            className={`text-left px-3 py-2 rounded-xl border text-slate-100 text-xs ${
+                            key={emp.id}
+                            onClick={() =>
+                              toggleSelectEmpAdd(String(emp.id))
+                            }
+                            className={`px-2.5 py-1 rounded-full border text-xs transition-colors ${
                               selected
-                                ? "border-emerald-400 bg-emerald-900/30"
-                                : "border-white/10 bg-slate-900/30"
+                                ? "bg-sky-50 border-sky-300 text-sky-700"
+                                : "bg-slate-50 border-slate-200 text-slate-600"
                             }`}
                           >
-                            <div className="font-semibold text-sm">
-                              {emp.name}
-                            </div>
-                            <div className="text-[11px] text-slate-300">
-                              {emp.role} • {emp.department}
-                            </div>
+                            {emp.name}
                           </button>
                         );
                       })
                     ) : (
-                      <div className="text-slate-300 text-xs">
-                        Loading employees…
-                      </div>
+                      <span className="text-slate-400">
+                        Loading employees...
+                      </span>
                     )}
                   </div>
-
-                  <div className="flex justify-end gap-2">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        addSelectedEmployeesToForm(
-                          selectedEmployeeIdsAdd,
-                          setAddForm
-                        );
-                        setSelectedEmployeeIdsAdd([]);
-                      }}
-                      className="px-4 py-2 rounded-xl bg-sky-600 text-xs font-semibold text-white hover:bg-sky-500"
-                    >
-                      Add Selected
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setSelectedEmployeeIdsAdd([])}
-                      className="px-4 py-2 rounded-xl border border-white/20 text-xs text-white hover:bg-white/5"
-                    >
-                      Clear
-                    </button>
-                  </div>
-
-                  <div className="mt-2 space-y-1">
-                    <div className="text-[11px] text-slate-300 font-semibold">
-                      Assigned Members ({addForm.team.length})
-                    </div>
-                    <div className="flex flex-wrap gap-2">
+                  {Array.isArray(addForm.team) && addForm.team.length > 0 && (
+                    <div className="mt-1 flex flex-wrap gap-1">
                       {addForm.team.map((m) => (
-                        <div
+                        <span
                           key={m.id}
-                          className="px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-xs"
+                          className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-slate-100 text-[11px] text-slate-700"
                         >
-                          <div className="font-semibold">{m.name}</div>
-                          <div className="text-[11px] text-slate-300">
-                            {m.role} • {m.department}
-                          </div>
+                          {m.name}
                           <button
                             type="button"
                             onClick={() =>
                               removeMemberFromForm(m.id, setAddForm)
                             }
-                            className="mt-1 text-[11px] px-2 py-0.5 rounded bg-rose-500 text-white"
+                            className="text-slate-400 hover:text-slate-700"
                           >
-                            Remove
+                            ×
                           </button>
-                        </div>
+                        </span>
                       ))}
-                      {addForm.team.length === 0 && (
-                        <div className="text-slate-400 text-[12px]">
-                          No members assigned yet.
-                        </div>
-                      )}
                     </div>
-                  </div>
+                  )}
                 </div>
 
-                <div className="flex justify-end gap-3 pt-3">
+                <div className="pt-2 flex gap-2">
                   <button
                     type="button"
                     onClick={() => {
@@ -676,15 +761,15 @@ const Tasks = () => {
                       setAddForm(emptyTask);
                       setSelectedEmployeeIdsAdd([]);
                     }}
-                    className="px-6 py-2 rounded-xl border border-white/30 bg-white/10 text-xs font-semibold text-slate-100 hover:bg-white/25"
+                    className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-xs font-semibold text-slate-600 hover:bg-slate-50"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-8 py-2 rounded-xl bg-gradient-to-r from-emerald-400 via-sky-400 to-purple-500 text-xs font-bold text-slate-950 shadow-2xl"
+                    className="flex-1 px-4 py-2.5 rounded-xl bg-sky-500 text-white text-xs font-semibold hover:bg-sky-600"
                   >
-                    Create Task
+                    Save task
                   </button>
                 </div>
               </form>
@@ -692,11 +777,11 @@ const Tasks = () => {
           </div>
         )}
 
-        {/* EDIT PANEL */}
+        {/* Edit Task drawer */}
         {isEditOpen && (
-          <div className="fixed inset-0 z-40 flex justify-end">
+          <div className="fixed inset-0 z-40 flex justify-end bg-black/30 backdrop-blur-sm">
             <div
-              className="flex-1 bg-black/40"
+              className="flex-1"
               onClick={() => {
                 setIsEditOpen(false);
                 setEditingId(null);
@@ -704,222 +789,209 @@ const Tasks = () => {
                 setSelectedEmployeeIdsEdit([]);
               }}
             />
-            <div className="w-full max-w-md bg-slate-950/95 border-l border-white/10 shadow-2xl p-6 overflow-y-auto">
-              <h3 className="text-lg font-bold text-white mb-1">Edit Task</h3>
-              <p className="text-xs text-white/70 mb-4">
-                Update project details, status and team members.
-              </p>
-
-              <form onSubmit={submitEditTask} className="space-y-4 text-sm">
+            <div className="w-full max-w-md bg-white h-full shadow-2xl border-l border-slate-200 flex flex-col animate-[slideIn_0.25s_ease-out]">
+              <header className="px-4 py-3 border-b border-slate-200 flex items-center justify-between">
                 <div>
-                  <label className="block text-[11px] font-semibold text-white/80 mb-1">
-                    Project Title
+                  <p className="text-sm font-semibold text-slate-900">
+                    Update task & members
+                  </p>
+                  <p className="text-[11px] text-slate-500">
+                    Change details or quickly add more members.
+                  </p>
+                </div>
+                <button
+                  onClick={() => {
+                    setIsEditOpen(false);
+                    setEditingId(null);
+                    setEditForm(emptyTask);
+                    setSelectedEmployeeIdsEdit([]);
+                  }}
+                  className="w-7 h-7 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center"
+                >
+                  ×
+                </button>
+              </header>
+
+              <form
+                onSubmit={submitEditTask}
+                className="flex-1 overflow-y-auto px-4 py-4 space-y-4 text-xs"
+              >
+                <div className="space-y-1.5">
+                  <label className="font-medium text-slate-700">
+                    Project title
                   </label>
                   <input
                     name="projectTitle"
                     value={editForm.projectTitle}
                     onChange={handleEditChange}
-                    className="w-full rounded-xl bg-slate-900 border border-white/20 px-3 py-2 text-white"
+                    className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-sky-500/60"
                   />
                 </div>
 
-                <div>
-                  <label className="block text-[11px] font-semibold text-white/80 mb-1">
-                    Task Title *
+                <div className="space-y-1.5">
+                  <label className="font-medium text-slate-700">
+                    Task name *
                   </label>
                   <input
                     name="title"
                     value={editForm.title}
                     onChange={handleEditChange}
                     required
-                    className="w-full rounded-xl bg-slate-900 border border-white/20 px-3 py-2 text-white"
+                    className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-sky-500/60"
                   />
                 </div>
 
-                <div>
-                  <label className="block text-[11px] font-semibold text-white/80 mb-1">
-                    Description / Remark
+                <div className="space-y-1.5">
+                  <label className="font-medium text-slate-700">
+                    Description
                   </label>
                   <textarea
                     name="description"
                     value={editForm.description}
                     onChange={handleEditChange}
                     rows={3}
-                    className="w-full rounded-xl bg-slate-900 border border-white/20 px-3 py-2 text-white resize-none"
+                    className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-sky-500/60 resize-none"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-[11px] font-semibold text-white/80 mb-1">
-                      Assign Date
+                  <div className="space-y-1.5">
+                    <label className="font-medium text-slate-700">
+                      Start / assign date
                     </label>
                     <input
+                      type="date"
                       name="assignDate"
                       value={editForm.assignDate}
                       onChange={handleEditChange}
-                      className="w-full rounded-xl bg-slate-900 border border-white/20 px-3 py-2 text-white"
+                      className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-sky-500/60"
                     />
                   </div>
-                  <div>
-                    <label className="block text-[11px] font-semibold text-white/80 mb-1">
-                      Finish Date
+                  <div className="space-y-1.5">
+                    <label className="font-medium text-slate-700">
+                      Deadline
                     </label>
                     <input
+                      type="date"
                       name="finishDate"
                       value={editForm.finishDate}
                       onChange={handleEditChange}
-                      className="w-full rounded-xl bg-slate-900 border border-white/20 px-3 py-2 text-white"
+                      className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-sky-500/60"
                     />
                   </div>
                 </div>
 
-                <div className="grid grid-cols-3 gap-3">
-                  <div>
-                    <label className="block text-[11px] font-semibold text-white/80 mb-1">
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1.5">
+                    <label className="font-medium text-slate-700">
                       Priority
                     </label>
                     <select
                       name="priority"
                       value={editForm.priority}
                       onChange={handleEditChange}
-                      className="w-full rounded-xl bg-slate-900 border border-white/20 px-3 py-2 text-white"
+                      className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-sky-500/60"
                     >
-                      <option>Low</option>
-                      <option>Normal</option>
-                      <option>High</option>
-                      <option>Most Urgent</option>
+                      <option value="Low">Low</option>
+                      <option value="Normal">Medium</option>
+                      <option value="High">High</option>
                     </select>
                   </div>
-                  <div>
-                    <label className="block text-[11px] font-semibold text-white/80 mb-1">
+                  <div className="space-y-1.5">
+                    <label className="font-medium text-slate-700">
                       Status
                     </label>
                     <select
                       name="status"
                       value={editForm.status}
                       onChange={handleEditChange}
-                      className="w-full rounded-xl bg-slate-900 border border-white/20 px-3 py-2 text-white"
+                      className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-sky-500/60"
                     >
-                      <option value="pending">Pending</option>
-                      <option value="inprogress">Inprogress</option>
+                      <option value="pending">To‑do</option>
+                      <option value="in-progress">In Progress</option>
                       <option value="completed">Completed</option>
                     </select>
                   </div>
-                  <div>
-                    <label className="block text-[11px] font-semibold text-white/80 mb-1">
-                      Progress %
-                    </label>
-                    <input
-                      name="progress"
-                      type="number"
-                      min="0"
-                      max="100"
-                      value={editForm.progress}
-                      onChange={handleEditChange}
-                      className="w-full rounded-xl bg-slate-900 border border-white/20 px-3 py-2 text-white"
-                    />
-                  </div>
                 </div>
 
-                {/* employees selection */}
-                <div className="border-t border-white/10 pt-3 mt-2 space-y-2">
+                <div className="space-y-1.5">
+                  <label className="font-medium text-slate-700">
+                    Progress (%)
+                  </label>
+                  <input
+                    type="number"
+                    name="progress"
+                    value={editForm.progress}
+                    onChange={handleEditChange}
+                    min={0}
+                    max={100}
+                    className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-sky-500/60"
+                  />
+                </div>
+
+                {/* team picker */}
+                <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-semibold text-white/80">
-                      Assign from Employees
+                    <label className="font-medium text-slate-700">
+                      Members
+                    </label>
+                    <span className="text-[11px] text-slate-400">
+                      Selected: {teamCount(editForm)}
                     </span>
                   </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                  <div className="flex flex-wrap gap-2 text-[11px]">
                     {employeesLoaded ? (
                       employees.map((emp) => {
-                        const selected =
-                          selectedEmployeeIdsEdit.includes(emp.id);
+                        const selected = selectedEmployeeIdsEdit.includes(
+                          String(emp.id)
+                        );
                         return (
                           <button
-                            key={emp.id}
                             type="button"
-                            onClick={() => toggleSelectEmpEdit(emp.id)}
-                            className={`text-left px-3 py-2 rounded-xl border text-slate-100 text-xs ${
+                            key={emp.id}
+                            onClick={() =>
+                              toggleSelectEmpEdit(String(emp.id))
+                            }
+                            className={`px-2.5 py-1 rounded-full border text-xs transition-colors ${
                               selected
-                                ? "border-emerald-400 bg-emerald-900/30"
-                                : "border-white/10 bg-slate-900/30"
+                                ? "bg-sky-50 border-sky-300 text-sky-700"
+                                : "bg-slate-50 border-slate-200 text-slate-600"
                             }`}
                           >
-                            <div className="font-semibold text-sm">
-                              {emp.name}
-                            </div>
-                            <div className="text-[11px] text-slate-300">
-                              {emp.role} • {emp.department}
-                            </div>
+                            {emp.name}
                           </button>
                         );
                       })
                     ) : (
-                      <div className="text-slate-300 text-xs">
-                        Loading employees…
-                      </div>
+                      <span className="text-slate-400">
+                        Loading employees...
+                      </span>
                     )}
                   </div>
-
-                  <div className="flex justify-end gap-2">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        addSelectedEmployeesToForm(
-                          selectedEmployeeIdsEdit,
-                          setEditForm
-                        );
-                        setSelectedEmployeeIdsEdit([]);
-                      }}
-                      className="px-4 py-2 rounded-xl bg-sky-600 text-xs font-semibold text-white hover:bg-sky-500"
-                    >
-                      Add Selected
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setSelectedEmployeeIdsEdit([])}
-                      className="px-4 py-2 rounded-xl border border-white/20 text-xs text-white hover:bg-white/5"
-                    >
-                      Clear
-                    </button>
-                  </div>
-
-                  <div className="mt-2 space-y-1">
-                    <div className="text-[11px] text-slate-300 font-semibold">
-                      Assigned Members ({editForm.team.length})
-                    </div>
-                    <div className="flex flex-wrap gap-2">
+                  {Array.isArray(editForm.team) && editForm.team.length > 0 && (
+                    <div className="mt-1 flex flex-wrap gap-1">
                       {editForm.team.map((m) => (
-                        <div
+                        <span
                           key={m.id}
-                          className="px-3 py-1.5 rounded-lg bg_WHITE/5 border border-white/10 text-xs"
+                          className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-slate-100 text-[11px] text-slate-700"
                         >
-                          <div className="font-semibold">{m.name}</div>
-                          <div className="text-[11px] text-slate-300">
-                            {m.role} • {m.department}
-                          </div>
+                          {m.name}
                           <button
                             type="button"
                             onClick={() =>
                               removeMemberFromForm(m.id, setEditForm)
                             }
-                            className="mt-1 text-[11px] px-2 py-0.5 rounded bg-rose-500 text-white"
+                            className="text-slate-400 hover:text-slate-700"
                           >
-                            Remove
+                            ×
                           </button>
-                        </div>
+                        </span>
                       ))}
-                      {editForm.team.length === 0 && (
-                        <div className="text-slate-400 text-[12px]">
-                          No members assigned yet.
-                        </div>
-                      )}
                     </div>
-                  </div>
+                  )}
                 </div>
 
-                <div className="flex justify-end gap-3 pt-3">
+                <div className="pt-2 flex gap-2">
                   <button
                     type="button"
                     onClick={() => {
@@ -928,15 +1000,15 @@ const Tasks = () => {
                       setEditForm(emptyTask);
                       setSelectedEmployeeIdsEdit([]);
                     }}
-                    className="px-6 py-2 rounded-xl border border-white/30 bg-white/10 text-xs font-semibold text-slate-100 hover:bg-white/25"
+                    className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-xs font-semibold text-slate-600 hover:bg-slate-50"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-8 py-2 rounded-xl bg-gradient-to-r from-emerald-400 via-sky-400 to-purple-500 text-xs font-bold text-slate-950 shadow-2xl"
+                    className="flex-1 px-4 py-2.5 rounded-xl bg-sky-500 text-white text-xs font-semibold hover:bg-sky-600"
                   >
-                    Update Task
+                    Update task
                   </button>
                 </div>
               </form>
@@ -944,154 +1016,135 @@ const Tasks = () => {
           </div>
         )}
 
-        {/* VIEW MODAL */}
+        {/* View modal */}
         {viewingTask && (
-          <div className="fixed inset-0 z-40 flex items-center justify-center px-4">
-            <div
-              className="absolute inset-0 bg-black/60"
-              onClick={closeView}
-            />
-            <div className="relative max-w-4xl w-full rounded-2xl bg-slate-950/95 border border-white/15 p-6 md:p-8 text-white shadow-2xl">
-              <div className="flex items-start justify-between gap-4">
+          <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+            <div className="max-w-lg w-full bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden">
+              <header className="px-4 py-3 border-b border-slate-200 flex items-center justify-between">
                 <div>
-                  {viewingTask.projectTitle && (
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-[11px]">
-                      <span className="w-1.5 h-1.5 rounded-full bg-sky-300" />
-                      {viewingTask.projectTitle}
-                    </div>
-                  )}
-                  <h3 className="mt-2 text-xl md:text-2xl font-black">
-                    {viewingTask.title}
-                  </h3>
-                  <p className="mt-2 text-sm text-slate-100/80">
-                    {viewingTask.description || "No description"}
+                  <p className="text-sm font-semibold text-slate-900">
+                    {viewingTask.title || "Task details"}
+                  </p>
+                  <p className="text-[11px] text-slate-500">
+                    {viewingTask.projectTitle || "No project"}
                   </p>
                 </div>
                 <button
                   onClick={closeView}
-                  className="p-2 rounded-xl bg-white/10 hover:bg-white/20"
+                  className="w-7 h-7 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center"
                 >
-                  ✕
+                  ×
                 </button>
-              </div>
+              </header>
 
-              <div className="mt-5 grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* left: timeline + team */}
-                <div className="space-y-4">
-                  <div className="text-sm">
-                    <p className="text-slate-400 text-xs">Timeline</p>
-                    <p className="mt-1 text-slate-100 text-sm">
-                      Start: {viewingTask.assignDate || "—"}
+              <div className="px-4 py-4 space-y-3 text-xs">
+                <p className="text-slate-600">
+                  {viewingTask.description || "No description provided."}
+                </p>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1">
+                    <p className="text-[11px] text-slate-400 uppercase">
+                      Start date
                     </p>
-                    <p className="text-slate-100 text-sm">
-                      Finish: {viewingTask.finishDate || "—"}
+                    <p className="text-slate-800">
+                      {viewingTask.assignDate || "—"}
                     </p>
                   </div>
-
-                  <div>
-                    <div className="flex items-center justify-between">
-                      <h4 className="text-sm font-semibold">Team Members</h4>
-                      <span className="text-xs text-slate-300">
-                        {teamCount(viewingTask)} member
-                        {teamCount(viewingTask) === 1 ? "" : "s"} •{" "}
-                        {departmentSummary(viewingTask)}
-                      </span>
-                    </div>
-                    <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3">
-                      {Array.isArray(viewingTask.team) &&
-                      viewingTask.team.length > 0 ? (
-                        viewingTask.team.map((m) => (
-                          <div
-                            key={m.id}
-                            className="p-3 rounded-xl bg-white/5 border border-white/10 text-xs"
-                          >
-                            <div className="flex items-start justify-between">
-                              <div>
-                                <div className="font-semibold text-sm">
-                                  {m.name}
-                                </div>
-                                <div className="text-[11px] text-slate-300">
-                                  {m.role}
-                                </div>
-                              </div>
-                              <div className="text-[11px] text-slate-300">
-                                {m.department}
-                              </div>
-                            </div>
-                          </div>
-                        ))
-                      ) : (
-                        <div className="text-slate-400 text-xs">
-                          No members assigned.
-                        </div>
+                  <div className="space-y-1">
+                    <p className="text-[11px] text-slate-400 uppercase">
+                      Deadline
+                    </p>
+                    <p className="text-slate-800">
+                      {viewingTask.finishDate || "—"}
+                    </p>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-[11px] text-slate-400 uppercase">
+                      Priority
+                    </p>
+                    <span
+                      className={`inline-flex px-3 py-1 rounded-full border text-[11px] font-medium ${priorityClass(
+                        viewingTask.priority
+                      )}`}
+                    >
+                      {viewingTask.priority || "Normal"}
+                    </span>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-[11px] text-slate-400 uppercase">
+                      Progress
+                    </p>
+                    <p className="text-slate-800">
+                      {Math.min(
+                        100,
+                        Number(viewingTask.progress) || 0
                       )}
-                    </div>
+                      %
+                    </p>
                   </div>
                 </div>
 
-                {/* right: progress card */}
-                <div className="space-y-6">
-                  <div className="p-6 bg-gradient-to-r from-emerald-500/10 to-blue-500/10 border border-emerald-400/30 rounded-2xl">
-                    <h3 className="font-bold text-xl mb-4 text-emerald-300 flex items-center gap-2">
-                      <span>📊</span> Progress
-                    </h3>
-                    <div className="space-y-4">
-                      <div className="w-full bg-slate-800/60 rounded-2xl h-7 overflow-hidden shadow-inner">
-                        <div
-                          className="h-7 bg-gradient-to-r from-emerald-400 via-emerald-500 to-emerald-600 rounded-2xl shadow-lg transition-all duration-700 flex items-center justify-center text-xs font-bold text-slate-900"
-                          style={{
-                            width: `${viewingTask.progress || 0}%`
-                          }}
+                <div className="space-y-1">
+                  <p className="text-[11px] text-slate-400 uppercase">
+                    Departments
+                  </p>
+                  <p className="text-slate-700">
+                    {departmentSummary(viewingTask)}
+                  </p>
+                </div>
+
+                <div className="space-y-1">
+                  <p className="text-[11px] text-slate-400 uppercase">
+                    Team
+                  </p>
+                  {Array.isArray(viewingTask.team) &&
+                  viewingTask.team.length > 0 ? (
+                    <div className="flex flex-wrap gap-1.5">
+                      {viewingTask.team.map((m) => (
+                        <span
+                          key={m.id}
+                          className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-slate-100 text-[11px] text-slate-700"
                         >
-                          {viewingTask.progress || 0}%
-                        </div>
-                      </div>
-                      <div className="grid grid-cols-3 gap-4 text-xs">
-                        <div>
-                          <p className="text-slate-400">Status</p>
-                          <p className="mt-1 font-semibold text-emerald-300 capitalize">
-                            {viewingTask.status}
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-slate-400">Priority</p>
-                          <p className="mt-1 font-semibold text-purple-300">
-                            {viewingTask.priority}
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-slate-400">Team size</p>
-                          <p className="mt-1 font-semibold text-slate-100">
-                            {teamCount(viewingTask)} members
-                          </p>
-                        </div>
-                      </div>
+                          {m.name}
+                          {m.role && (
+                            <span className="text-slate-400">
+                              · {m.role}
+                            </span>
+                          )}
+                        </span>
+                      ))}
                     </div>
-                  </div>
+                  ) : (
+                    <p className="text-slate-500">No team assigned.</p>
+                  )}
                 </div>
               </div>
 
-              <div className="mt-5 flex justify-end gap-3 text-xs">
+              <footer className="px-4 py-3 border-t border-slate-200 flex justify-end gap-2">
+                <button
+                  onClick={() => {
+                    closeView();
+                    startEditTask(viewingTask);
+                  }}
+                  className="px-4 py-2 rounded-xl bg-sky-500 text-white text-xs font-semibold hover:bg-sky-600"
+                >
+                  Update task
+                </button>
                 <button
                   onClick={closeView}
-                  className="px-4 py-2 rounded-xl border border-white/20 hover:bg-white/10"
+                  className="px-4 py-2 rounded-xl border border-slate-200 bg-white text-xs font-semibold text-slate-700 hover:bg-slate-50"
                 >
                   Close
                 </button>
-                <button
-                  onClick={() => {
-                    startEditTask(viewingTask);
-                    closeView();
-                  }}
-                  className="px-4 py-2 rounded-xl bg-emerald-400 text-slate-900 font-semibold hover:bg-emerald-300"
-                >
-                  Edit Task
-                </button>
-              </div>
+              </footer>
             </div>
           </div>
         )}
       </div>
+
+      {/* simple keyframe for drawers (optional; add to global CSS if you want smoother) */}
+      {/* @keyframes slideIn { from { transform: translateX(12px); opacity: 0; } to { transform: translateX(0); opacity: 1; } } */}
     </div>
   );
 };
