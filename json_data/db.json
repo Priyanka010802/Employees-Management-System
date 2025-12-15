@@ -42,6 +42,18 @@
       "empCode": "001",
       "hireDate": "2025-12-09",
       "id": 3
+    },
+    {
+      "name": "aryan",
+      "image": "",
+      "email": "aryan@gmail.com",
+      "address": "Vishnupuri, Nanded",
+      "salary": 40000,
+      "department": "it",
+      "role": "inten",
+      "empCode": "emp-004",
+      "hireDate": "2025-12-02",
+      "id": 4
     }
   ],
   "departments": [
@@ -212,6 +224,19 @@
           "department": "Analytics"
         }
       ]
+    },
+    {
+      "projectTitle": "dashbord",
+      "title": "making dashbord for fianace",
+      "description": "",
+      "assignDate": "2025-10-30",
+      "finishDate": "2025-12-25",
+      "priority": "Normal",
+      "status": "in-progress",
+      "progress": 70,
+      "team": [],
+      "time": "2025-12-11 06:17",
+      "id": 5
     }
   ],
   "messages": [
@@ -268,9 +293,10 @@
       "employeeDepartment": "",
       "date": "2025-12-10",
       "status": "Late",
-      "checkIn": null,
-      "checkOut": null,
-      "createdAt": "2025-12-10T04:37:15.124Z"
+      "checkIn": "11:35",
+      "checkOut": "20:35",
+      "createdAt": "2025-12-10T04:37:15.124Z",
+      "updatedAt": "2025-12-11T12:05:50.449Z"
     },
     {
       "id": "att_1765341453563_5wztrwqy9",
@@ -280,9 +306,10 @@
       "employeeDepartment": "",
       "date": "2025-12-10",
       "status": "Half Day",
-      "checkIn": null,
-      "checkOut": null,
-      "createdAt": "2025-12-10T04:37:33.563Z"
+      "checkIn": "10:35",
+      "checkOut": "13:35",
+      "createdAt": "2025-12-10T04:37:33.563Z",
+      "updatedAt": "2025-12-11T12:05:29.895Z"
     },
     {
       "id": "att_1765341471664_awa0cbqi9",
@@ -304,9 +331,10 @@
       "employeeDepartment": "",
       "date": "2025-12-10",
       "status": "Present",
-      "checkIn": null,
-      "checkOut": null,
-      "createdAt": "2025-12-10T15:40:43.896Z"
+      "checkIn": "09:35",
+      "checkOut": "20:36",
+      "createdAt": "2025-12-10T15:40:43.896Z",
+      "updatedAt": "2025-12-11T12:06:11.513Z"
     },
     {
       "id": "att_1765383751403_nag45ym90",
@@ -316,9 +344,10 @@
       "employeeDepartment": "",
       "date": "2025-12-10",
       "status": "Present",
-      "checkIn": null,
-      "checkOut": null,
-      "createdAt": "2025-12-10T16:22:31.403Z"
+      "checkIn": "10:36",
+      "checkOut": "21:36",
+      "createdAt": "2025-12-10T16:22:31.403Z",
+      "updatedAt": "2025-12-11T12:06:27.945Z"
     }
   ],
   "reports": [

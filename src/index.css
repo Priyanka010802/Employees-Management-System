@@ -1,6 +1,5 @@
 @import "tailwindcss";
 
-
 html,
 body,
 #root {
@@ -9,12 +8,29 @@ body,
 
 body {
   margin: 0;
+  overflow-x: hidden; /* Prevents horizontal scrolling */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
-@keyframes float {
-  0% { transform: translateY(0); }
-  50% { transform: translateY(4px); }
-  100% { transform: translateY(0); }
+
+/* Responsive font sizes */
+html {
+  font-size: 14px; /* Base for mobile */
 }
+
+@media (min-width: 640px) {
+  html {
+    font-size: 15px;
+  }
+}
+
+@media (min-width: 1024px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+/* Animations */
 @keyframes float {
   0% { transform: translateY(0); }
   50% { transform: translateY(-4px); }
@@ -32,14 +48,142 @@ body {
   100% { stroke-dashoffset: 140; }
 }
 
-
-
-
-
-.fade-card {
-  transition: transform .25s ease, box-shadow .25s ease;
+/* Hide scrollbars globally */
+*::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
 }
-.fade-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 10px 20px rgba(2,6,23,0.08);
+
+* {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Responsive fade-card with mobile optimization */
+.fade-card {
+  transition: all .25s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, box-shadow;
+}
+
+@media (hover: hover) and (min-width: 640px) {
+  .fade-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 40px rgba(2,6,23,0.12);
+  }
+}
+
+@media (min-width: 1024px) {
+  .fade-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 25px 50px rgba(2,6,23,0.15);
+  }
+}
+
+/* Mobile-first responsive utilities */
+@media (max-width: 639px) {
+  /* Mobile optimizations */
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  /* Touch target improvements */
+  button,
+  [role="button"],
+  .btn {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  /* Tablet optimizations */
+  .container {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+/* Prevent body scroll on mobile when modal is open */
+body.modal-open {
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+}
+
+/* Responsive backdrop blur optimization */
+@supports (backdrop-filter: blur(10px)) {
+  .backdrop-blur {
+    backdrop-filter: blur(10px);
+  }
+  
+  @media (max-width: 639px) {
+    .backdrop-blur {
+      backdrop-filter: blur(8px);
+    }
+  }
+}
+
+/* Safe area insets for mobile */
+@supports (padding: max(0px)) {
+  body {
+    padding-bottom: max(env(safe-area-inset-bottom), 0px);
+    padding-left: max(env(safe-area-inset-left), 0px);
+    padding-right: max(env(safe-area-inset-right), 0px);
+  }
+}
+
+/* High DPI display optimization */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .fade-card {
+    box-shadow: 0 4px 12px rgba(2,6,23,0.08);
+  }
+  
+  .fade-card:hover {
+    box-shadow: 0 25px 50px rgba(2,6,23,0.18);
+  }
+}
+
+/* Landscape mobile fixes */
+@media (max-width: 639px) and (orientation: landscape) {
+  html {
+    font-size: 13px;
+  }
+  
+  .container {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+}
+
+/* Extra safety for horizontal scroll prevention */
+html {
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
+#root {
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
+/* Focus styles for accessibility */
+*:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .fade-card {
+    transition: none;
+  }
 }

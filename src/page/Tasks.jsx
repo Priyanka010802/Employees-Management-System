@@ -416,7 +416,7 @@ const Tasks = () => {
                     <div>Task name</div>
                     <div>Description</div>
                     <div>Deadline</div>
-                    {/* <div>People</div> */}
+                    { <div>People</div> }
                     <div>Progress</div>
                     <div className="text-right">Actions</div>
                   </div>
@@ -456,7 +456,7 @@ const Tasks = () => {
                       </div>
 
                       {/* people */}
-                      <div className="flex items-center gap-1">
+                      {<div className="flex items-center gap-1">
                         {Array.isArray(task.team) && task.team.length > 0 ? (
                           <>
                             {task.team.slice(0, 3).map((m) => (
@@ -475,13 +475,13 @@ const Tasks = () => {
                           </>
                         ) : (
                           <span className="text-[11px] text-slate-400">
-                            No members
+                            members
                           </span>
                         )}
-                      </div>
-
+                      </div> }
+{/* ********************************************************** */}
                       {/* progress */}
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-3">
                         <div className="flex-1 h-1.5 rounded-full bg-slate-100 overflow-hidden">
                           <div
                             className={`h-1.5 rounded-full ${
@@ -745,7 +745,7 @@ const Tasks = () => {
                             }
                             className="text-slate-400 hover:text-slate-700"
                           >
-                            ×
+                            
                           </button>
                         </span>
                       ))}
