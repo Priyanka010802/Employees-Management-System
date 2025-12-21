@@ -64,7 +64,7 @@ const LoginPage = ({ onLoginSuccess }) => {
       className="min-h-screen w-full flex items-center justify-center px-3 sm:px-6 lg:px-10 relative"
       style={{
         backgroundImage:
-          "url('https://wallpapercave.com/wp/wp11410778.jpg')",
+          "url('https://static.vecteezy.com/system/resources/previews/001/180/980/non_2x/abstract-geometric-3d-textured-shape-white-background-vector.jpg')",
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",

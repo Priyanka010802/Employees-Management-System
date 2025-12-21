@@ -43,7 +43,7 @@ const Dashboard = ({ currentUserEmail, onViewTasks }) => {
   const normalizeStatus = (raw) => {
     const s = (raw || "").toLowerCase();
     if (s === "completed" || s === "done" || s === "finished") return "Completed";
-    if (s === "inprogress" || s === "in progress" || s === "ongoing")
+    if (s === "in-progress" || s === "in progress" || s === "ongoing")
       return "In Progress";
     return "Pending";
   };
@@ -678,3 +678,4 @@ const Dashboard = ({ currentUserEmail, onViewTasks }) => {
 };
 
 export default Dashboard;
+
