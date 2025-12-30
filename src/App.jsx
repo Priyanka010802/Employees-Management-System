@@ -1,13 +1,13 @@
-// src/App.jsx
+// src/App.jsx - COMPLETE with ALL 8 Admin Subpages Connected
 import { useEffect, useState } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
 
 import Home from "./components/Home";
-// NEW: Employess Pages
+// NEW: Employees Pages
 import EmployeeLogin from "./components/EmployeeLogin";
 import EmployeeDashboard from "./components/EmployeeDashboard";
-// HR  pages
+// HR pages
 import LoginPage from "./page/Login Page";
 import Dashboard from "./page/Dashboard";
 import ManageEmployees from "./page/Employees";
@@ -17,7 +17,15 @@ import Attendance from "./page/Attendance";
 import Goals from "./page/Goals";
 // NEW: admin pages
 import AdminLogin from "./components/AdminLogin";
-import AdminDashboard from "./components/AdminDashboard";
+import AdminDashboard from "./components/AdminDashboard"; // Updated path
+// NEW: Admin Subpages (create these files)
+import InterviewCalls from "./subpages/InterviewcallPage";
+import CompanyPage from "./subpages/company";
+import StudentPage from "./subpages/Student";
+import JobPortalPage from "./subpages/jobportal";
+import SchedulePage from "./subpages/schedule";
+import OfferPage from "./subpages/offerpage";
+import ReportPage from "./subpages/Report";
 
 const API_BASE = "http://localhost:3000";
 
@@ -31,8 +39,9 @@ function App() {
   const [activePage, setActivePage] = useState("dashboard");
   const [currentSession, setCurrentSession] = useState(null);
 
-  // Admin-specific
+  // Admin-specific state
   const [adminEmail, setAdminEmail] = useState(null);
+  const [adminActivePage, setAdminActivePage] = useState("admin-dashboard"); // NEW: Admin subpage navigation
 
   // Initialize AOS animations
   useEffect(() => {
@@ -76,16 +85,17 @@ function App() {
     setCurrentScreen("employee-app");
   };
 
-  // NEW: Admin Login handler (frontend only)
+  // Admin Login handler
   const handleAdminLogin = (email) => {
     setAdminEmail(email);
     setUserType("admin");
     setIsLoggedIn(true);
     setShowHome(false);
     setCurrentScreen("admin-app");
+    setAdminActivePage("admin-dashboard"); // NEW: Set default admin page
   };
 
-  // Logout handler (for HR; admin handled separately below)
+  // Logout handler (for HR)
   const handleLogout = async () => {
     if (currentSession?.id) {
       try {
@@ -108,13 +118,24 @@ function App() {
     setUserType(null);
   };
 
-  // NEW: Admin logout (khali frontend state reset)
+  // Admin logout
   const handleAdminLogout = () => {
     setAdminEmail(null);
     setUserType(null);
     setIsLoggedIn(false);
-    setCurrentScreen("admin-login"); // logout ke baad admin login pe wapas
+    setCurrentScreen("admin-login");
+    setAdminActivePage("admin-dashboard");
   };
+
+  // NEW: Admin Navigation Handlers
+  const handleNavigateToInterviewCalls = () => setAdminActivePage("interview-calls");
+  const handleNavigateToCompanyPage = () => setAdminActivePage("company-page");
+  const handleNavigateToStudentPage = () => setAdminActivePage("student-page");
+  const handleNavigateToJobPortal = () => setAdminActivePage("job-portal");
+  const handleNavigateToSchedule = () => setAdminActivePage("schedule-page");
+  const handleNavigateToOffers = () => setAdminActivePage("offer-page");
+  const handleNavigateToReports = () => setAdminActivePage("report-page");
+  const handleBackToAdminDashboard = () => setAdminActivePage("admin-dashboard");
 
   const goToTasks = () => setActivePage("tasks");
 
@@ -158,13 +179,11 @@ function App() {
     return <EmployeeDashboard currentUserEmail={currentUserEmail} />;
   }
 
-  // Admin login (from Hiring & Recruitment card)
+  // Admin login
   if (currentScreen === "admin-login" && !adminEmail) {
     return (
       <AdminLogin
-        onLoginSuccess={(email) => {
-          handleAdminLogin(email);
-        }}
+        onLoginSuccess={handleAdminLogin}
         onBack={() => {
           setCurrentScreen("home");
           setShowHome(true);
@@ -174,15 +193,155 @@ function App() {
     );
   }
 
-  // Admin dashboard
+  // NEW: Admin Dashboard with Subpages
   if (currentScreen === "admin-app" && userType === "admin" && adminEmail) {
     return (
-      <AdminDashboard adminEmail={adminEmail} onLogout={handleAdminLogout} />
+      <div className="min-h-screen bg-slate-50">
+        {/* Admin Page Navigation */}
+        {adminActivePage === "admin-dashboard" && (
+          <AdminDashboard
+            adminEmail={adminEmail}
+            onLogout={handleAdminLogout}
+            onNavigateToInterviewCalls={handleNavigateToInterviewCalls}
+            onNavigateToCompanyPage={handleNavigateToCompanyPage}
+            onNavigateToStudentPage={handleNavigateToStudentPage}
+            onNavigateToJobPortal={handleNavigateToJobPortal}
+            onNavigateToSchedule={handleNavigateToSchedule}
+            onNavigateToOffers={handleNavigateToOffers}
+            onNavigateToReports={handleNavigateToReports}
+          />
+        )}
+
+        {/* Interview Calls Page */}
+        {adminActivePage === "interview-calls" && (
+          <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/50 to-emerald-50/30">
+            <div className="max-w-7xl mx-auto px-4 pt-6">
+              <button
+                onClick={handleBackToAdminDashboard}
+                className="mb-8 inline-flex items-center gap-3 rounded-3xl border border-slate-200 bg-white/80 backdrop-blur-sm px-6 py-3 text-sm font-bold text-slate-800 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+                Back to Admin Dashboard
+              </button>
+            </div>
+            <InterviewCalls />
+          </div>
+        )}
+
+        {/* Company Page */}
+        {adminActivePage === "company-page" && (
+          <div className="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50/50 to-purple-50/30">
+            <div className="max-w-7xl mx-auto px-4 pt-6">
+              <button
+                onClick={handleBackToAdminDashboard}
+                className="mb-8 inline-flex items-center gap-3 rounded-3xl border border-slate-200 bg-white/80 backdrop-blur-sm px-6 py-3 text-sm font-bold text-slate-800 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+                Back to Admin Dashboard
+              </button>
+            </div>
+            <CompanyPage />
+          </div>
+        )}
+
+        {/* Student Page */}
+        {adminActivePage === "student-page" && (
+          <div className="min-h-screen bg-gradient-to-br from-slate-50 via-sky-50/50 to-blue-50/30">
+            <div className="max-w-7xl mx-auto px-4 pt-6">
+              <button
+                onClick={handleBackToAdminDashboard}
+                className="mb-8 inline-flex items-center gap-3 rounded-3xl border border-slate-200 bg-white/80 backdrop-blur-sm px-6 py-3 text-sm font-bold text-slate-800 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+                Back to Admin Dashboard
+              </button>
+            </div>
+            <StudentPage />
+          </div>
+        )}
+
+        {/* Job Portal Page */}
+        {adminActivePage === "job-portal" && (
+          <div className="min-h-screen bg-gradient-to-br from-slate-50 via-emerald-50/50 to-green-50/30">
+            <div className="max-w-7xl mx-auto px-4 pt-6">
+              <button
+                onClick={handleBackToAdminDashboard}
+                className="mb-8 inline-flex items-center gap-3 rounded-3xl border border-slate-200 bg-white/80 backdrop-blur-sm px-6 py-3 text-sm font-bold text-slate-800 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+                Back to Admin Dashboard
+              </button>
+            </div>
+            <JobPortalPage />
+          </div>
+        )}
+
+        {/* Schedule Page */}
+        {adminActivePage === "schedule-page" && (
+          <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50/50 to-pink-50/30">
+            <div className="max-w-7xl mx-auto px-4 pt-6">
+              <button
+                onClick={handleBackToAdminDashboard}
+                className="mb-8 inline-flex items-center gap-3 rounded-3xl border border-slate-200 bg-white/80 backdrop-blur-sm px-6 py-3 text-sm font-bold text-slate-800 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+                Back to Admin Dashboard
+              </button>
+            </div>
+            <SchedulePage />
+          </div>
+        )}
+
+        {/* Offer Page */}
+        {adminActivePage === "offer-page" && (
+          <div className="min-h-screen bg-gradient-to-br from-slate-50 via-emerald-50/50 to-teal-50/30">
+            <div className="max-w-7xl mx-auto px-4 pt-6">
+              <button
+                onClick={handleBackToAdminDashboard}
+                className="mb-8 inline-flex items-center gap-3 rounded-3xl border border-slate-200 bg-white/80 backdrop-blur-sm px-6 py-3 text-sm font-bold text-slate-800 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+                Back to Admin Dashboard
+              </button>
+            </div>
+            <OfferPage />
+          </div>
+        )}
+
+        {/* Report Page */}
+        {adminActivePage === "report-page" && (
+          <div className="min-h-screen bg-gradient-to-br from-slate-50 via-amber-50/50 to-orange-50/30">
+            <div className="max-w-7xl mx-auto px-4 pt-6">
+              <button
+                onClick={handleBackToAdminDashboard}
+                className="mb-8 inline-flex items-center gap-3 rounded-3xl border border-slate-200 bg-white/80 backdrop-blur-sm px-6 py-3 text-sm font-bold text-slate-800 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+                Back to Admin Dashboard
+              </button>
+            </div>
+            <ReportPage />
+          </div>
+        )}
+      </div>
     );
   }
 
-  // ---------- HR APP LAYOUT (sidebar + pages) ----------
-
+  // HR dashboard shell (unchanged)
   const navItems = [
     {
       id: "dashboard",

@@ -16,7 +16,7 @@
       "department": "Design",
       "role": "UI/UX Designer",
       "empCode": "",
-      "hireDate": "",
+      "hireDate": "2025-09-24",
       "id": "101"
     },
     {
@@ -32,55 +32,40 @@
       "id": "102"
     },
     {
-      "id": "103",
       "name": "Emma Wilson",
-      "employeeName": "Emma Wilson",
-      "role": "Marketing Specialist",
-      "position": "Marketing Specialist",
-      "jobTitle": "Marketing Manager",
-      "designation": "Marketing",
-      "department": "Marketing",
-      "division": "Business",
-      "departmentName": "Marketing",
+      "image": "",
       "email": "emma.w@company.com",
-      "emailAddress": "emma.w@company.com",
-      "phone": "555-0103",
-      "phoneNumber": "555-0103",
-      "mobile": "555-0103"
+      "address": "",
+      "salary": 400000,
+      "department": "Marketing",
+      "role": "Marketing Specialist",
+      "empCode": "",
+      "hireDate": "",
+      "id": "103"
     },
     {
-      "id": "104",
       "name": "David Kim",
-      "employeeName": "David Kim",
-      "role": "Data Analyst",
-      "position": "Data Analyst",
-      "jobTitle": "Senior Data Analyst",
-      "designation": "Analyst",
-      "department": "Sales",
-      "division": "Business",
-      "departmentName": "Sales",
+      "image": "",
       "email": "david.k@company.com",
-      "emailAddress": "david.k@company.com",
-      "phone": "555-0104",
-      "phoneNumber": "555-0104",
-      "mobile": "555-0104"
+      "address": "",
+      "salary": 300000,
+      "department": "Sales",
+      "role": "Data Analyst",
+      "empCode": "",
+      "hireDate": "",
+      "id": "104"
     },
     {
-      "id": "105",
       "name": "Lisa Taylor",
-      "employeeName": "Lisa Taylor",
-      "role": "Sales Operations",
-      "position": "Sales Operations",
-      "jobTitle": "Sales Operations Manager",
-      "designation": "Sales",
-      "department": "Sales",
-      "division": "Business",
-      "departmentName": "Sales",
+      "image": "",
       "email": "lisa.t@company.com",
-      "emailAddress": "lisa.t@company.com",
-      "phone": "555-0105",
-      "phoneNumber": "555-0105",
-      "mobile": "555-0105"
+      "address": "",
+      "salary": 25000,
+      "department": "Sales",
+      "role": "Sales Operations",
+      "empCode": "",
+      "hireDate": "",
+      "id": "105"
     },
     {
       "id": "106",
@@ -100,72 +85,52 @@
       "mobile": "555-0106"
     },
     {
-      "id": "107",
       "name": "Robert Lee",
-      "employeeName": "Robert Lee",
-      "role": "Financial Analyst",
-      "position": "Financial Analyst",
-      "jobTitle": "Senior Financial Analyst",
-      "designation": "Finance",
-      "department": "Finance",
-      "division": "Business",
-      "departmentName": "Finance",
+      "image": "",
       "email": "robert.l@company.com",
-      "emailAddress": "robert.l@company.com",
-      "phone": "555-0107",
-      "phoneNumber": "555-0107",
-      "mobile": "555-0107"
+      "address": "",
+      "salary": 40000,
+      "department": "Finance",
+      "role": "Financial Analyst",
+      "empCode": "",
+      "hireDate": "",
+      "id": "107"
     },
     {
-      "id": "108",
       "name": "Maria Garcia",
-      "employeeName": "Maria Garcia",
-      "role": "HR Manager",
-      "position": "HR Manager",
-      "jobTitle": "Human Resources Manager",
-      "designation": "HR",
-      "department": "Human Resources",
-      "division": "Administration",
-      "departmentName": "HR",
+      "image": "",
       "email": "maria.g@company.com",
-      "emailAddress": "maria.g@company.com",
-      "phone": "555-0108",
-      "phoneNumber": "555-0108",
-      "mobile": "555-0108"
+      "address": "",
+      "salary": 60000,
+      "department": "Human Resources",
+      "role": "HR Manager",
+      "empCode": "",
+      "hireDate": "",
+      "id": "108"
     },
     {
-      "id": "109",
       "name": "James Wilson",
-      "employeeName": "James Wilson",
-      "role": "Project Manager",
-      "position": "Project Manager",
-      "jobTitle": "Senior Project Manager",
-      "designation": "Management",
-      "department": "Project Management",
-      "division": "Operations",
-      "departmentName": "PMO",
+      "image": "",
       "email": "james.w@company.com",
-      "emailAddress": "james.w@company.com",
-      "phone": "555-0109",
-      "phoneNumber": "555-0109",
-      "mobile": "555-0109"
+      "address": "",
+      "salary": 400000,
+      "department": "Project Management",
+      "role": "Project Manager",
+      "empCode": "",
+      "hireDate": "",
+      "id": "109"
     },
     {
-      "id": "110",
       "name": "Sophia Patel",
-      "employeeName": "Sophia Patel",
-      "role": "QA Engineer",
-      "position": "QA Engineer",
-      "jobTitle": "Quality Assurance Engineer",
-      "designation": "Testing",
-      "department": "Engineering",
-      "division": "Tech",
-      "departmentName": "Engineering",
+      "image": "",
       "email": "sophia.p@company.com",
-      "emailAddress": "sophia.p@company.com",
-      "phone": "555-0110",
-      "phoneNumber": "555-0110",
-      "mobile": "555-0110"
+      "address": "",
+      "salary": 50000,
+      "department": "Engineering",
+      "role": "QA Engineer",
+      "empCode": "",
+      "hireDate": "",
+      "id": "110"
     }
   ],
   "departments": [
@@ -196,6 +161,13 @@
       "description": "",
       "status": "inactive",
       "id": 4
+    },
+    {
+      "name": "it",
+      "code": "IT",
+      "description": "",
+      "status": "active",
+      "id": 5
     }
   ],
   "tasks": [
@@ -361,51 +333,93 @@
   "attendance": [
     {
       "id": 1,
-      "employeeEmail": "priyankasangamkar@gmail.com",
-      "date": "2025-12-08",
+      "employeeEmail": "sarah.chen@company.com",
+      "date": "2025-12-01",
       "status": "Present",
-      "checkIn": "09:30",
-      "checkOut": "18:10",
-      "updatedAt": "2025-12-10T16:57:21.787Z"
+      "checkIn": "09:00",
+      "checkOut": "18:00",
+      "updatedAt": "2025-12-21T10:00:00.000Z"
     },
     {
-      "id": "att_2025-12-20_anshulr@gmail.com",
-      "employeeId": "anshulr@gmail.com",
-      "employeeEmail": "anshulr@gmail.com",
-      "employeeName": "anshulr@gmail.com",
-      "date": "2025-12-20",
+      "id": 2,
+      "employeeEmail": "michael.b@company.com",
+      "date": "2025-12-01",
+      "status": "Present",
+      "checkIn": "09:15",
+      "checkOut": "17:45",
+      "updatedAt": "2025-12-21T10:00:00.000Z"
+    },
+    {
+      "id": 3,
+      "employeeEmail": "emma.w@company.com",
+      "date": "2025-12-01",
+      "status": "Present",
+      "checkIn": "09:05",
+      "checkOut": "18:15",
+      "updatedAt": "2025-12-21T10:00:00.000Z"
+    },
+    {
+      "id": 4,
+      "employeeEmail": "david.k@company.com",
+      "date": "2025-12-01",
+      "status": "Present",
+      "checkIn": "09:10",
+      "checkOut": "17:30",
+      "updatedAt": "2025-12-21T10:00:00.000Z"
+    },
+    {
+      "id": 5,
+      "employeeEmail": "lisa.t@company.com",
+      "date": "2025-12-01",
       "status": "Late",
-      "checkIn": "22:11",
-      "checkOut": "22:11",
-      "createdFrom": "employee-dashboard",
-      "createdAt": "2025-12-20T16:41:10.424Z",
-      "updatedAt": "2025-12-20T16:41:18.799Z"
+      "checkIn": "10:20",
+      "checkOut": "18:00",
+      "updatedAt": "2025-12-21T10:00:00.000Z"
     },
     {
-      "id": "att_2025-12-20_priyankasangamkar@gmail.com",
-      "employeeId": "priyankasangamkar@gmail.com",
-      "employeeEmail": "priyankasangamkar@gmail.com",
-      "employeeName": "priyankasangamkar@gmail.com",
-      "date": "2025-12-20",
-      "status": "Half Day",
-      "checkIn": "23:14",
-      "checkOut": "01:45",
-      "createdFrom": "employee-dashboard",
-      "createdAt": "2025-12-20T17:44:23.849Z",
-      "updatedAt": "2025-12-20T20:15:15.121Z"
+      "id": 6,
+      "employeeEmail": "alex.j@company.com",
+      "date": "2025-12-01",
+      "status": "Present",
+      "checkIn": "08:55",
+      "checkOut": "18:30",
+      "updatedAt": "2025-12-21T10:00:00.000Z"
     },
     {
-      "id": "att_2025-12-20_aryan@gmail.com",
-      "employeeId": "aryan@gmail.com",
-      "employeeEmail": "aryan@gmail.com",
-      "employeeName": "aryan@gmail.com",
-      "date": "2025-12-20",
-      "status": "Half Day",
-      "checkIn": "02:04",
-      "checkOut": "02:05",
-      "createdFrom": "employee-dashboard",
-      "createdAt": "2025-12-20T20:34:58.539Z",
-      "updatedAt": "2025-12-20T20:35:25.794Z"
+      "id": 7,
+      "employeeEmail": "robert.l@company.com",
+      "date": "2025-12-01",
+      "status": "Present",
+      "checkIn": "09:00",
+      "checkOut": "17:50",
+      "updatedAt": "2025-12-21T10:00:00.000Z"
+    },
+    {
+      "id": 8,
+      "employeeEmail": "maria.g@company.com",
+      "date": "2025-12-01",
+      "status": "Present",
+      "checkIn": "09:10",
+      "checkOut": "18:00",
+      "updatedAt": "2025-12-21T10:00:00.000Z"
+    },
+    {
+      "id": 9,
+      "employeeEmail": "james.w@company.com",
+      "date": "2025-12-01",
+      "status": "Present",
+      "checkIn": "09:05",
+      "checkOut": "18:20",
+      "updatedAt": "2025-12-21T10:00:00.000Z"
+    },
+    {
+      "id": 10,
+      "employeeEmail": "sophia.p@company.com",
+      "date": "2025-12-01",
+      "status": "Present",
+      "checkIn": "09:00",
+      "checkOut": "18:00",
+      "updatedAt": "2025-12-21T10:00:00.000Z"
     }
   ],
   "reports": [
@@ -418,10 +432,452 @@
   ],
   "goals": [
     {
+      "id": "g1",
+      "employeeName": "Priya Sharma",
+      "role": "Frontend Developer",
+      "department": "Engineering",
+      "avatar": "",
+      "yearlyTarget": "Ship 4 major UI features",
+      "kpis": [
+        "Improve Lighthouse score to 95+",
+        "Reduce UI bugs by 40%"
+      ],
+      "progress": 82,
+      "achievements": [
+        "Dark mode rollout for EMS",
+        "Built animated employee directory dashboard"
+      ],
+      "isEmployeeOfYear": true
+    },
+    {
+      "id": "g2",
+      "employeeName": "Raj Patel",
+      "role": "Backend Developer",
+      "department": "Engineering",
+      "avatar": "",
+      "yearlyTarget": "Stabilize API & performance",
+      "kpis": [
+        "99.9% API uptime",
+        "Average API latency < 250ms"
+      ],
+      "progress": 65,
+      "achievements": [
+        "Refactored auth service",
+        "Introduced rate limiting"
+      ],
+      "isEmployeeOfYear": false
+    },
+    {
+      "id": "g3",
+      "employeeName": "Anita Gupta",
+      "role": "DevOps Engineer",
+      "department": "IT Operations",
+      "avatar": "",
+      "yearlyTarget": "Automate infra & releases",
+      "kpis": [
+        "CI/CD for all services",
+        "Zero manual deployments"
+      ],
+      "progress": 48,
+      "achievements": [
+        "Created EMS CI pipeline"
+      ],
+      "isEmployeeOfYear": false
+    }
+  ],
+  "interviewCalls": [
+    {
       "id": 1,
-      "title": "Reduce attrition by 5%",
-      "owner": "HR Team",
-      "progress": 40
+      "company": "TestInnova Ltd",
+      "position": "Senior Frontend Developer",
+      "date": "2025-12-28",
+      "time": "10:30 AM",
+      "status": "Scheduled",
+      "interviewer": "Sarah Johnson",
+      "location": "Zoom",
+      "notes": "React + TypeScript expertise required. Focus on hooks and performance optimization.",
+      "avatar": "TJ",
+      "calls": 2
+    },
+    {
+      "id": 2,
+      "company": "TechNova Solutions",
+      "position": "Full Stack Engineer",
+      "date": "2025-12-29",
+      "time": "02:15 PM",
+      "status": "Confirmed",
+      "interviewer": "David Chen",
+      "location": "Google Meet",
+      "notes": "Node.js + React experience. Discuss system design and API architecture. Review past projects.",
+      "avatar": "DC",
+      "calls": 3
+    },
+    {
+      "id": 3,
+      "company": "InnovateX Corp",
+      "position": "UI/UX Designer",
+      "date": "2025-12-30",
+      "time": "11:00 AM",
+      "status": "Pending",
+      "interviewer": "Emily Rodriguez",
+      "location": "In-person - HQ",
+      "notes": "Figma + Adobe XD portfolio review. Bring latest projects. Discuss design systems.",
+      "avatar": "ER",
+      "calls": 1
+    },
+    {
+      "id": 4,
+      "company": "Nexlify Inc",
+      "position": "React Developer",
+      "date": "2026-01-02",
+      "time": "03:30 PM",
+      "status": "Scheduled",
+      "interviewer": "Michael Tan",
+      "location": "Microsoft Teams",
+      "notes": "Advanced React patterns and state management discussion. Prepare for coding challenge.",
+      "avatar": "MT",
+      "calls": 2
+    },
+    {
+      "id": 5,
+      "company": "CodeSphere Technologies",
+      "position": "Software Engineer II",
+      "date": "2025-12-31",
+      "time": "09:00 AM",
+      "status": "Confirmed",
+      "interviewer": "Priya Sharma",
+      "location": "Zoom",
+      "notes": "JavaScript algorithms + React hooks. Live coding expected. Review LeetCode medium problems.",
+      "avatar": "CS",
+      "calls": 4
+    },
+    {
+      "id": 6,
+      "company": "PixelCraft Studios",
+      "position": "Frontend Architect",
+      "date": "2026-01-03",
+      "time": "04:00 PM",
+      "status": "Pending",
+      "interviewer": "Alex Rivera",
+      "location": "Google Meet",
+      "notes": "Architecture discussion. Performance optimization strategies. Next.js experience preferred.",
+      "avatar": "PS",
+      "calls": 3
+    },
+    {
+      "id": 7,
+      "company": "DataForge Analytics",
+      "position": "Fullstack Developer",
+      "date": "2026-01-04",
+      "time": "01:30 PM",
+      "status": "Scheduled",
+      "interviewer": "Dr. Rachel Kim",
+      "location": "Microsoft Teams",
+      "notes": "MongoDB + Express + React stack. Data visualization experience. Dashboard projects.",
+      "avatar": "DF",
+      "calls": 2
+    }
+  ],
+  "students": [
+    {
+      "id": 1,
+      "name": "Anaya Gupta",
+      "email": "anaya@gmail.com",
+      "contact": "9876543210",
+      "course": "Master of Computer",
+      "company": "NA"
+    },
+    {
+      "id": 2,
+      "name": "Rahul Sharma",
+      "email": "rahul.sharma@edu.com",
+      "contact": "9876543211",
+      "course": "B.Tech CSE",
+      "company": "TechNova Solutions"
+    },
+    {
+      "name": "priyanka",
+      "email": "priya@gmail.com",
+      "contact": "789654123",
+      "course": "ENTC",
+      "id": 3
+    }
+  ],
+  "companies": [
+    {
+      "id": 1,
+      "name": "Techflow Solutions Ltd",
+      "location": "Pune, Maharashtra",
+      "roles": "SDE, Intern",
+      "status": "Active"
+    },
+    {
+      "id": 2,
+      "name": "Innova Systems",
+      "location": "Bangalore, Karnataka",
+      "roles": "SDE, DevOps, Intern",
+      "status": "Active"
+    },
+    {
+      "id": 3,
+      "name": "DigitalForge Tech",
+      "location": "Mumbai, Maharashtra",
+      "roles": "DevOps, SRE",
+      "status": "Pending"
+    },
+    {
+      "id": 4,
+      "name": "NextGen Solutions",
+      "location": "Hyderabad, Telangana",
+      "roles": "UI/UX, Frontend, Backend",
+      "status": "Active"
+    },
+    {
+      "id": 5,
+      "name": "CodeCraft Pvt Ltd",
+      "location": "Chennai, Tamil Nadu",
+      "roles": "Backend, Fullstack",
+      "status": "Active"
+    }
+  ],
+  "hrdata": [
+    {
+      "id": 1,
+      "type": "interview",
+      "role": "Telecaller",
+      "title": "Telecaller Round 1 - Technical Screening",
+      "candidateName": "Rahul Sharma",
+      "contact": "9876543210",
+      "email": "rahul.sharma@email.com",
+      "date": "2025-12-30",
+      "time": "10:30",
+      "status": "Scheduled",
+      "applicants": 1
+    },
+    {
+      "id": 2,
+      "type": "interview",
+      "role": "Telecaller",
+      "title": "Telecaller Final Round",
+      "candidateName": "Priya Patel",
+      "contact": "9876543211",
+      "email": "priya.patel@email.com",
+      "date": "2025-12-29",
+      "time": "14:15",
+      "status": "Completed",
+      "applicants": 3
+    },
+    {
+      "id": 3,
+      "type": "interview",
+      "role": "Counselor",
+      "title": "Counselor Behavioral Interview",
+      "candidateName": "Amit Kumar",
+      "contact": "9876543212",
+      "email": "amit.kumar@email.com",
+      "date": "2025-12-30",
+      "time": "11:00",
+      "status": "Scheduled",
+      "applicants": 2
+    },
+    {
+      "id": 4,
+      "type": "interview",
+      "role": "Counselor",
+      "title": "Counselor Initial Screening",
+      "candidateName": "Sneha Gupta",
+      "contact": "9876543213",
+      "email": "sneha.gupta@email.com",
+      "date": "2025-12-28",
+      "time": "16:30",
+      "status": "Completed",
+      "applicants": 1
+    },
+    {
+      "id": 5,
+      "type": "interview",
+      "role": "Trainer",
+      "title": "Trainer Technical Assessment",
+      "candidateName": "Vikram Singh",
+      "contact": "9876543214",
+      "email": "vikram.singh@email.com",
+      "date": "2025-12-30",
+      "time": "15:00",
+      "status": "Scheduled",
+      "applicants": 4
+    },
+    {
+      "id": 6,
+      "type": "interview",
+      "role": "Trainer",
+      "title": "Trainer Demo Session",
+      "candidateName": "Neha Reddy",
+      "contact": "9876543215",
+      "email": "neha.reddy@email.com",
+      "date": "2025-12-27",
+      "time": "09:45",
+      "status": "Completed",
+      "applicants": 2
+    },
+    {
+      "id": 7,
+      "type": "interview",
+      "role": "HR",
+      "title": "HR Final Interview",
+      "candidateName": "Rohit Verma",
+      "contact": "9876543216",
+      "email": "rohit.verma@email.com",
+      "date": "2025-12-29",
+      "time": "17:20",
+      "status": "Cancelled",
+      "applicants": 0
+    },
+    {
+      "id": 8,
+      "type": "interview",
+      "role": "HR",
+      "title": "HR Offer Discussion",
+      "candidateName": "Divya Menon",
+      "contact": "9876543217",
+      "email": "divya.menon@email.com",
+      "date": "2025-12-26",
+      "time": "13:00",
+      "status": "Completed",
+      "applicants": 5
+    },
+    {
+      "id": 9,
+      "type": "interview",
+      "role": "Telecaller",
+      "title": "Telecaller Voice Test",
+      "candidateName": "Karan Malhotra",
+      "contact": "9876543218",
+      "email": "karan.malhotra@email.com",
+      "date": "2025-12-25",
+      "time": "11:15",
+      "status": "Completed",
+      "applicants": 1
+    },
+    {
+      "id": 10,
+      "type": "interview",
+      "role": "Counselor",
+      "title": "Counselor Role Play",
+      "candidateName": "Pooja Nair",
+      "contact": "9876543219",
+      "email": "pooja.nair@email.com",
+      "date": "2025-12-24",
+      "time": "10:00",
+      "status": "Scheduled",
+      "applicants": 3
+    },
+    {
+      "id": 11,
+      "type": "interview",
+      "role": "Trainer",
+      "title": "Training Skills Assessment",
+      "candidateName": "Saurabh Joshi",
+      "contact": "9876543220",
+      "email": "saurabh.joshi@email.com",
+      "date": "2025-12-23",
+      "time": "14:30",
+      "status": "Completed",
+      "applicants": 2
+    },
+    {
+      "id": 12,
+      "type": "job",
+      "title": "Telecaller",
+      "role": "Telecaller",
+      "name": "Priya Sharma",
+      "contact": "9876543210",
+      "email": "priya.sharma@example.com",
+      "gender": "Female",
+      "experience": "1+ years",
+      "count": "(2)",
+      "status": "Active",
+      "applicants": 5
+    },
+    {
+      "id": 13,
+      "type": "job",
+      "title": "Counselor",
+      "role": "Counselor",
+      "name": "Rahul Kumar",
+      "contact": "9876543211",
+      "email": "rahul.kumar@example.com",
+      "gender": "Male",
+      "experience": "3+ years",
+      "count": "(1)",
+      "status": "Active",
+      "applicants": 3
+    },
+    {
+      "id": 14,
+      "type": "job",
+      "title": "Trainer",
+      "role": "Trainer",
+      "name": "Anita Desai",
+      "contact": "9876543212",
+      "email": "anita.desai@example.com",
+      "gender": "Female",
+      "experience": "5+ years",
+      "count": "(5)",
+      "status": "Active",
+      "applicants": 12
+    },
+    {
+      "id": 15,
+      "type": "job",
+      "title": "HR Executive",
+      "role": "HR",
+      "name": "Vikram Singh",
+      "contact": "9876543213",
+      "email": "vikram.singh@example.com",
+      "gender": "Male",
+      "experience": "4+ years",
+      "count": "(3)",
+      "status": "Active",
+      "applicants": 8
+    },
+    {
+      "id": 16,
+      "type": "interview",
+      "role": "Telecaller",
+      "title": "Telecaller Round 1",
+      "candidateName": "Priya Sharma",
+      "contact": "9876543210",
+      "email": "priya@example.com",
+      "date": "2025-12-30",
+      "time": "10:00",
+      "status": "Scheduled",
+      "applicants": 5
+    },
+    {
+      "id": 18,
+      "type": "interview",
+      "role": "Trainer",
+      "title": "Trainer Demo Session",
+      "candidateName": "Anita Desai",
+      "contact": "9876543212",
+      "email": "anita@example.com",
+      "date": "2026-01-01",
+      "time": "11:00",
+      "status": "Completed",
+      "applicants": 12
+    },
+    {
+      "id": 19,
+      "type": "interview",
+      "role": "HR",
+      "title": "HR Screening",
+      "candidateName": "Vikram Singh",
+      "contact": "9876543213",
+      "email": "vikram@example.com",
+      "date": "2025-12-29",
+      "time": "16:00",
+      "status": "Cancelled",
+      "applicants": 8
     }
   ]
 }

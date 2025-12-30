@@ -3,8 +3,8 @@ import { useState, useEffect } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
 
-const VALID_EMAIL = "priyankasangamkar@gmail.com";
-const VALID_PASSWORD = "admin";
+const VALID_EMAIL = "admin@gmail.com";
+const VALID_PASSWORD = "admin123";
 
 const LoginPage = ({ onLoginSuccess }) => {
   const [formData, setFormData] = useState({

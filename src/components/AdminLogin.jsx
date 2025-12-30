@@ -16,8 +16,8 @@ const AdminLogin = ({ onLoginSuccess, onBack }) => {
     setErrorMsg("");
 
     // Frontend-only fixed credentials
-    const VALID_EMAIL = "priyankasangamkar@gmail.com";
-    const VALID_PASSWORD = "admin";
+    const VALID_EMAIL = "admin@gmail.com";
+    const VALID_PASSWORD = "admin123";
 
     setTimeout(() => {
       if (email === VALID_EMAIL && password === VALID_PASSWORD) {
