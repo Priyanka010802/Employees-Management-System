@@ -497,7 +497,11 @@
       "location": "Zoom",
       "notes": "React + TypeScript expertise required. Focus on hooks and performance optimization.",
       "avatar": "TJ",
-      "calls": 2
+      "calls": 2,
+      "allStudents": 20,
+      "appliedStudents": 12,
+      "shortlistedStudents": 9,
+      "placedStudents": 6
     },
     {
       "id": 2,
@@ -510,7 +514,11 @@
       "location": "Google Meet",
       "notes": "Node.js + React experience. Discuss system design and API architecture. Review past projects.",
       "avatar": "DC",
-      "calls": 3
+      "calls": 3,
+      "allStudents": 10,
+      "appliedStudents": 8,
+      "shortlistedStudents": 5,
+      "placedStudents": 2
     },
     {
       "id": 3,
@@ -576,6 +584,19 @@
       "notes": "MongoDB + Express + React stack. Data visualization experience. Dashboard projects.",
       "avatar": "DF",
       "calls": 2
+    },
+    {
+      "company": "amazone ",
+      "position": "ui design ",
+      "date": "2025-12-31",
+      "time": "11:13",
+      "interviewer": "aryan",
+      "location": "Zoom",
+      "notes": "",
+      "calls": 1,
+      "status": "Scheduled",
+      "avatar": "AM",
+      "id": 8
     }
   ],
   "students": [
@@ -606,38 +627,78 @@
   "companies": [
     {
       "id": 1,
-      "name": "Techflow Solutions Ltd",
-      "location": "Pune, Maharashtra",
-      "roles": "SDE, Intern",
-      "status": "Active"
+      "name": "TechNova Solutions",
+      "hrName": "Priya Sharma",
+      "hrEmail": "priya.sharma@technova.com",
+      "hrContact": "+91 98765 43210",
+      "location": "Bangalore, Karnataka, India",
+      "platform": "LinkedIn, Naukri",
+      "roles": "SDE-II, Frontend Developer, DevOps Engineer, Data Analyst",
+      "status": "Active",
+      "companyHistory": "TechNova Solutions is a leading software development company founded in 2015, specializing in cloud-native applications and AI solutions. We have 500+ employees across 3 countries and have successfully placed 200+ students from top engineering colleges.",
+      "applications": 156,
+      "shortlisted": 45,
+      "placed": 28
     },
     {
       "id": 2,
-      "name": "Innova Systems",
-      "location": "Bangalore, Karnataka",
-      "roles": "SDE, DevOps, Intern",
-      "status": "Active"
+      "name": "GlobalFin Tech",
+      "hrName": "Rahul Mehta",
+      "hrEmail": "rahul.mehta@globalfin.com",
+      "hrContact": "+91 99887 76543",
+      "location": "Mumbai, Maharashtra, India",
+      "platform": "Naukri",
+      "roles": "Backend Developer, Fullstack Engineer, QA Engineer, Product Manager",
+      "status": "Active",
+      "companyHistory": "GlobalFin Tech is a fintech unicorn serving 10M+ users with digital banking solutions. Established in 2018, we focus on scalable microservices architecture and have a strong engineering culture.",
+      "applications": 89,
+      "shortlisted": 32,
+      "placed": 18
     },
     {
       "id": 3,
-      "name": "DigitalForge Tech",
-      "location": "Mumbai, Maharashtra",
-      "roles": "DevOps, SRE",
-      "status": "Pending"
+      "name": "InnovateLabs AI",
+      "hrName": "Sneha Patel",
+      "hrEmail": "sneha.patel@innovatelabs.ai",
+      "hrContact": "+91 87654 32109",
+      "location": "Hyderabad, Telangana, India",
+      "platform": "LinkedIn",
+      "roles": "ML Engineer, Data Scientist, AI Research Intern",
+      "status": "Pending",
+      "companyHistory": "InnovateLabs AI is a cutting-edge AI research company working on generative AI and computer vision. New to campus recruitment but excited to hire top talent for our R&D team.",
+      "applications": 67,
+      "shortlisted": 12,
+      "placed": 0
     },
     {
       "id": 4,
-      "name": "NextGen Solutions",
-      "location": "Hyderabad, Telangana",
-      "roles": "UI/UX, Frontend, Backend",
-      "status": "Active"
+      "name": "CodeCrafters Inc",
+      "hrName": "Amit Kumar",
+      "hrEmail": "amit.kumar@codecrafters.com",
+      "hrContact": "+91 91234 56789",
+      "location": "Pune, Maharashtra, India",
+      "platform": "LinkedIn, Naukri",
+      "roles": "SDE-I, Frontend Developer, Mobile App Developer",
+      "status": "Active",
+      "companyHistory": "CodeCrafters specializes in cross-platform mobile and web applications. With 10+ years in the industry, we've delivered 100+ enterprise solutions and maintain a 95% placement success rate.",
+      "applications": 234,
+      "shortlisted": 78,
+      "placed": 52
     },
     {
       "id": 5,
-      "name": "CodeCraft Pvt Ltd",
-      "location": "Chennai, Tamil Nadu",
-      "roles": "Backend, Fullstack",
-      "status": "Active"
+      "name": "Quantum Dynamics",
+      "hrName": "Divya Reddy",
+      "hrEmail": "divya.reddy@quantumdynamics.com",
+      "hrContact": "+91 93456 78901",
+      "location": "Chennai, Tamil Nadu, India",
+      "platform": "",
+      "roles": "Software Architect, DevOps Lead, Cloud Engineer",
+      "status": "Active",
+      "companyHistory": "Quantum Dynamics builds enterprise-grade cloud infrastructure solutions for Fortune 500 companies. Our team of 300+ engineers works with cutting-edge technologies like Kubernetes and serverless computing.",
+      "applications": 112,
+      "shortlisted": 38,
+      "placed": 25
     }
   ],
   "hrdata": [
